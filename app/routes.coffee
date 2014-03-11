@@ -45,31 +45,18 @@ module.exports = (app, passport) ->
     failureFlash : true # allow flash messages
 
   # ============================================================================
-  # AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER ACCOUNT) ===================
+  # AUTHORIZE (ALREADY LOGGED IN / CHANGE EMAIL & PASSWORD) ====================
   # ============================================================================
 
-  app.get '/connect/local', (req, res) ->
+  app.get '/change', (req, res) ->
     res.render 'change.ejs',
       message: req.flash 'loginMessage'
 
-  app.post '/connect/local', passport.authenticate 'local-signup',
+  app.post '/change', passport.authenticate 'local-signup',
     successRedirect : '/profile' # redirect to the secure profile section
-    failureRedirect : '/connect/local'
+    failureRedirect : '/change'
       # redirect back to the signup page if there is an error
     failureFlash : true # allow flash messages
-
-  # ============================================================================
-  # UNLINK ACCOUNTS ============================================================
-  # ============================================================================
-  # used to unlink accounts.
-  # for local account, remove email and password
-  # user account will stay active in case they want to reconnect in the future
-
-  app.get '/unlink/local', (req, res) ->
-    user = req.user
-    user.local.email = undefined
-    user.local.password = undefined
-    user.save (err) -> res.redirect '/profile'
 
 # ==============================================================================
 # MIDDLEWARE ===================================================================

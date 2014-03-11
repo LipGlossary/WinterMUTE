@@ -22,19 +22,12 @@
 		<div class="col-sm-6">
 			<div class="well">
 				<h3><span class="fa fa-user"></span> Local</h3>
-
-				<% if (user.local.email) { %>
 					<p>
-						<strong>id</strong>: <%= user._id %><br>
-						<strong>email</strong>: <%= user.local.email %><br>
-						<strong>password</strong>: <%= user.local.password %>
-					</p>
-					
-					<a href="/unlink/local" class="btn btn-default">Unlink</a>
-				<% } else { %>
-					<a href="/connect/local" class="btn btn-default">Connect Local</a>
-				<% } %>
-
+					<strong>id</strong>: <%= user._id %><br>
+					<strong>email</strong>: <%= user.local.email %><br>
+					<strong>password</strong>: <%= user.local.password %>
+				</p>
+				<a href="/change" class="btn btn-default">Modify</a>
 			</div>
 		</div>
 		

@@ -35,25 +35,16 @@
       failureRedirect: '/signup',
       failureFlash: true
     }));
-    app.get('/connect/local', function(req, res) {
+    app.get('/change', function(req, res) {
       return res.render('change.ejs', {
         message: req.flash('loginMessage')
       });
     });
-    app.post('/connect/local', passport.authenticate('local-signup', {
+    return app.post('/change', passport.authenticate('local-signup', {
       successRedirect: '/profile',
-      failureRedirect: '/connect/local',
+      failureRedirect: '/change',
       failureFlash: true
     }));
-    return app.get('/unlink/local', function(req, res) {
-      var user;
-      user = req.user;
-      user.local.email = void 0;
-      user.local.password = void 0;
-      return user.save(function(err) {
-        return res.redirect('/profile');
-      });
-    });
   };
 
   isLoggedIn = function(req, res, next) {
