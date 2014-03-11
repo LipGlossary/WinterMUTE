@@ -22,7 +22,7 @@
     }, function(req, email, password, done) {
       return process.nextTick(function() {
         return User.findOne({
-          'local.email': email
+          'email': email
         }, function(err, user) {
           if (err) {
             return done(err);
@@ -47,7 +47,7 @@
         var user;
         if (!req.user) {
           return User.findOne({
-            'local.email': email
+            'email': email
           }, function(err, user) {
             var newUser;
             if (err) {
@@ -57,8 +57,8 @@
               return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
             } else {
               newUser = new User();
-              newUser.local.email = email;
-              newUser.local.password = newUser.generateHash(password);
+              newUser.email = email;
+              newUser.password = newUser.generateHash(password);
               return newUser.save(function(err) {
                 if (err) {
                   throw err;
@@ -69,8 +69,8 @@
           });
         } else {
           user = req.user;
-          user.local.email = email;
-          user.local.password = user.generateHash(password);
+          user.email = email;
+          user.password = user.generateHash(password);
           return user.save(function(err) {
             if (err) {
               throw err;

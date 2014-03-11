@@ -33,7 +33,7 @@ module.exports = (passport) ->
     (req, email, password, done) ->
       # asynchronous
       process.nextTick ->
-        User.findOne { 'local.email' :  email }, (err, user) ->
+        User.findOne { 'email' :  email }, (err, user) ->
           # if there are any errors, return the error
           if err then return done err
           # if no user is found, return the message
@@ -67,7 +67,7 @@ module.exports = (passport) ->
       process.nextTick ->
           # check if the user is already logged ina
           if !req.user
-            User.findOne { 'local.email' :  email }, (err, user) ->
+            User.findOne { 'email' :  email }, (err, user) ->
               # if there are any errors, return the error
               if err then return done err
               # check to see if theres already a user with that email
@@ -79,15 +79,15 @@ module.exports = (passport) ->
               else
                 # create the user
                 newUser = new User();
-                newUser.local.email = email;
-                newUser.local.password = newUser.generateHash password
+                newUser.email = email;
+                newUser.password = newUser.generateHash password
                 newUser.save (err) ->
                   if err then throw err
                   return done null, newUser
           else
             user = req.user;
-            user.local.email = email;
-            user.local.password = user.generateHash password
+            user.email = email;
+            user.password = user.generateHash password
             user.save (err) ->
               if err then throw err
               return done null, user
