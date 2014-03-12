@@ -1,6 +1,6 @@
 # set up ======================================================================
 # get all the tools we need
-express  = require 'express'
+express  = require 'express.io'
 app      = express()
 port     = process.env.PORT || 8080
 mongoose = require 'mongoose'

@@ -2,7 +2,7 @@
 (function() {
   var app, configDB, express, flash, mongoose, passport, port;
 
-  express = require('express');
+  express = require('express.io');
 
   app = express();
 
