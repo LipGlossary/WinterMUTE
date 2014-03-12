@@ -1,7 +1,7 @@
 # set up ======================================================================
 # get all the tools we need
 express  = require 'express.io'
-app      = express()
+app      = express().http().io()
 port     = process.env.PORT || 8080
 mongoose = require 'mongoose'
 passport = require 'passport'
@@ -20,6 +20,7 @@ app.configure ->
   app.use express.logger('dev')  # log every request to the console
   app.use express.cookieParser() # read cookies (needed for auth)
   app.use express.bodyParser()   # get information from html forms
+  app.use express.static(__dirname + '/public');
 
   app.set 'view engine', 'ejs' # set up ejs for templating
 
@@ -33,6 +34,9 @@ app.configure ->
 # routes ======================================================================
 # load our routes and pass in our app and fully configured passport
 require('./app/routes.js')(app, passport)
+
+# events =======================================================================
+require('./app/events.js')()
 
 # launch ======================================================================
 app.listen port

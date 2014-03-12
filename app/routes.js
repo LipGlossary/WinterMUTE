@@ -6,8 +6,8 @@
     app.get('/', function(req, res) {
       return res.render('index.ejs');
     });
-    app.get('/profile', isLoggedIn, function(req, res) {
-      return res.render('profile.ejs', {
+    app.get('/verse', isLoggedIn, function(req, res) {
+      return res.render('verse.ejs', {
         user: req.user
       });
     });
@@ -20,8 +20,8 @@
         message: req.flash('loginMessage')
       });
     });
-    app.post('/login', passport.authenticate('local-login', {
-      successRedirect: '/profile',
+    app.post('/login', passport.authenticate('login', {
+      successRedirect: '/verse',
       failureRedirect: '/login',
       failureFlash: true
     }));
@@ -30,8 +30,8 @@
         message: req.flash('signupMessage')
       });
     });
-    app.post('/signup', passport.authenticate('local-signup', {
-      successRedirect: '/profile',
+    app.post('/signup', passport.authenticate('signup', {
+      successRedirect: '/verse',
       failureRedirect: '/signup',
       failureFlash: true
     }));
@@ -40,8 +40,8 @@
         message: req.flash('loginMessage')
       });
     });
-    return app.post('/change', passport.authenticate('local-signup', {
-      successRedirect: '/profile',
+    return app.post('/change', passport.authenticate('signup', {
+      successRedirect: '/verse',
       failureRedirect: '/change',
       failureFlash: true
     }));

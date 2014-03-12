@@ -5,9 +5,9 @@ module.exports = (app, passport) ->
   # show the home page (will also have our login links)
   app.get '/', (req, res) -> res.render 'index.ejs'
 
-  # PROFILE SECTION ==============================
-  app.get '/profile', isLoggedIn, (req, res) ->
-    res.render 'profile.ejs', user : req.user
+  # LIVE MUSH ====================================
+  app.get '/verse', isLoggedIn, (req, res) ->
+    res.render 'verse.ejs', user: req.user
 
   # LOGOUT =======================================
   app.get '/logout', (req, res) ->
@@ -25,8 +25,8 @@ module.exports = (app, passport) ->
       message: req.flash 'loginMessage'
 
   # process the login form
-  app.post '/login', passport.authenticate 'local-login',
-    successRedirect : '/profile' # redirect to the secure profile section
+  app.post '/login', passport.authenticate 'login',
+    successRedirect : '/verse' # redirect to the secure profile section
     failureRedirect : '/login'
       # redirect back to the signup page if there is an error
     failureFlash : true # allow flash messages
@@ -38,8 +38,8 @@ module.exports = (app, passport) ->
       message: req.flash 'signupMessage'
 
   # process the signup form
-  app.post '/signup', passport.authenticate 'local-signup',
-    successRedirect : '/profile' # redirect to the secure profile section
+  app.post '/signup', passport.authenticate 'signup',
+    successRedirect : '/verse' # redirect to the secure profile section
     failureRedirect : '/signup'
       # redirect back to the signup page if there is an error
     failureFlash : true # allow flash messages
@@ -52,8 +52,8 @@ module.exports = (app, passport) ->
     res.render 'change.ejs',
       message: req.flash 'loginMessage'
 
-  app.post '/change', passport.authenticate 'local-signup',
-    successRedirect : '/profile' # redirect to the secure profile section
+  app.post '/change', passport.authenticate 'signup',
+    successRedirect : '/verse' # redirect to the secure profile section
     failureRedirect : '/change'
       # redirect back to the signup page if there is an error
     failureFlash : true # allow flash messages

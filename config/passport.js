@@ -15,7 +15,7 @@
         return done(err, user);
       });
     });
-    passport.use('local-login', new LocalStrategy({
+    passport.use('login', new LocalStrategy({
       usernameField: 'email',
       passwordField: 'password',
       passReqToCallback: true
@@ -38,7 +38,7 @@
         });
       });
     }));
-    return passport.use('local-signup', new LocalStrategy({
+    return passport.use('signup', new LocalStrategy({
       usernameField: 'email',
       passwordField: 'password',
       passReqToCallback: true

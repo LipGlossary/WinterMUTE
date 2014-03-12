@@ -4,7 +4,7 @@
 
   express = require('express.io');
 
-  app = express();
+  app = express().http().io();
 
   port = process.env.PORT || 8080;
 
@@ -24,6 +24,7 @@
     app.use(express.logger('dev'));
     app.use(express.cookieParser());
     app.use(express.bodyParser());
+    app.use(express["static"](__dirname + '/public'));
     app.set('view engine', 'ejs');
     app.use(express.session({
       secret: 'ilovescotchscotchyscotchscotch'
@@ -34,6 +35,8 @@
   });
 
   require('./app/routes.js')(app, passport);
+
+  require('./app/events.js')();
 
   app.listen(port);
 
