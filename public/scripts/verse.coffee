@@ -41,3 +41,44 @@ jQuery ($) ->
   # "anything" can be any event except for the reserved ones. data is data, and callback can be used to send a reply.
   socket.on 'anything', (data, callback) ->
     console.log 'anything: ' + data
+
+  help = ->
+    this.echo '''
+
+COMMAND     ARGUMENTS    DESCRIPTION
+
+help                     List of commands
+
+echo                     Echoes any arguments
+
+
+[[;blue;white]Coming soon...]
+
+COMMAND     ARGUMENTS    DESCRIPTION
+
+tutorial    reset        Resets the tutorial
+            skip         No more tutorials will be seen
+
+'''
+
+  commands =
+    help: help
+    echo: (arg) -> this.echo arg
+
+  options =
+    history: true
+    prompt: '> '
+    greetings: '[[b;red;white]Welcome to Winter MUTE, a multi-user text empire.]\nFor a list of commands, type "help".'
+    processArguments: false
+    outputLimit: -1
+    linksNoReferer: false
+    exit: false
+    clear: false
+    enabled: true
+    onBlur: (terminal) -> return false
+    historySize: false
+    height: $(window).height()
+
+  $('#console').terminal commands, options
+
+  $.terminal.active().echo 'Hello from outside!'
