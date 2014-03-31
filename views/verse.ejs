@@ -6,8 +6,9 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 <script src="scripts/jquery.terminal-0.8.7.min.js"></script>
-<script sroc="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="scripts/ejs.js"></script>
 <script src="scripts/verse.js"></script>
 
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
@@ -23,6 +24,15 @@
     <div id="console" class="col-xs-12 col-sm-10">
     </div>
     <div id="palette" class="col-xs-12 col-sm-2">
+      <p>Hello <%= user.email %></p>
+      <p>chars.length: <%= user.chars.length %></p>
+      <% if (user.chars.length > 0) { %>
+        <p>self.name: <%= user.chars[0].name %></p>
+        <p>self.list: <%= user.chars[0].list %></p>
+        <p>self.look: <%= user.chars[0].look %></p>
+        <p>self.move: <%= user.chars[0].move %></p>
+        <p>self.appear: <%= user.chars[0].appear %></p>
+      <% } %>
       <p><button id="help" class="btn btn-info">help</button></p>
     </div>
   </div>
