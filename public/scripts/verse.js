@@ -3,36 +3,7 @@
   jQuery(function($) {
     var handler, options, socket, term;
     socket = io.connect();
-    socket.on('connecting', function() {
-      return console.log('connecting');
-    });
-    socket.on('connect', function() {
-      return console.log('connect');
-    });
-    socket.on('disconnect', function() {
-      return console.log('disconnect');
-    });
-    socket.on('reconnecting', function() {
-      return console.log('reconnecting');
-    });
-    socket.on('reconnect', function() {
-      return console.log('reconnect');
-    });
-    socket.on('connect_failed', function() {
-      return console.log('connect_failed');
-    });
-    socket.on('reconnect_failed', function() {
-      return console.log('reconnect_failed');
-    });
-    socket.on('error', function() {
-      return console.log('error');
-    });
-    socket.on('message', function(message, callback) {
-      return console.log('message: ' + message);
-    });
-    socket.on('anything', function(data, callback) {
-      return console.log('anything: ' + data);
-    });
+    $.getScript('./scripts/events.js');
     $.getScript('./scripts/commands.js');
     handler = function(command, term) {
       var parse;
@@ -41,7 +12,8 @@
         case 'help':
           return help(term);
         case 'edit':
-          return edit(parse.args, term);
+          socket.emit('edit', parse.args);
+          return console.log('Emitted edit.');
         default:
           return term.echo("I'm sorry, I didn't understand the command \"" + parse.name + "\".");
       }

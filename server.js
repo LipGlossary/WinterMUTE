@@ -34,9 +34,9 @@
     return app.use(flash());
   });
 
-  require('./app/routes.js')(app, passport);
+  require('./app/routes')(app, passport);
 
-  require('./app/events.js')();
+  require('./app/events')(app);
 
   app.listen(port);
 

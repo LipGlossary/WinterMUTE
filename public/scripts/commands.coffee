@@ -1,23 +1,26 @@
 @help = (term) -> term.echo '''
 
-COMMAND     ARGUMENTS    DESCRIPTION
+COMMAND     ARGUMENTS       DESCRIPTION
 
-help                     List of commands
+help        N/A             List of commands
 
-echo                     Echoes any arguments
-
-edit        self         Edit your out-of-character self
-
+edit                        Edit anything
+            self            Edit your out-of-character self
 
 [[;blue;white]Coming soon...]
 
-COMMAND     ARGUMENTS    DESCRIPTION
+COMMAND     ARGUMENTS       DESCRIPTION
 
-tutorial    reset        Resets the tutorial
-            skip         No more tutorials will be seen
+edit        char            Edit a characters
+            char, <name>    Edit the character <name>
+            room            Edit a room
+            room, <code>    Edit room <code>
+
+tutorial    reset           Resets the tutorial
+            skip            No more tutorials will be seen
 
 '''
-
+###
 @edit = (args, term) ->
   switch args[0]
     when 'self' then editChar 'self', term
@@ -40,6 +43,12 @@ tutorial    reset        Resets the tutorial
       )
     else "I cannot edit \"#{args[0]}\"."
 
-editChar = (char, term) -> term.echo "Editing \"#{char}\"!"
+editChar = (char, term) -> 
+  switch char
+    when 'self' then socket.emit 'edit self'
+    when undefined
+      term.echo 'What character would you like to edit?\n    self'
+    else term.echo "Sorry, I cannot edit characters other than yourself at this time."
 
-editRoom = (room, term) -> term.echo "Editing room \"#{room}\"!"
+editRoom = (room, term) -> term.echo "Sorry, I cannot edit rooms at this time."
+###

@@ -33,10 +33,10 @@ app.configure ->
 
 # routes ======================================================================
 # load our routes and pass in our app and fully configured passport
-require('./app/routes.js')(app, passport)
+require('./app/routes')(app, passport)
 
 # events =======================================================================
-require('./app/events.js')()
+require('./app/events')(app)
 
 # launch ======================================================================
 app.listen port
