@@ -7,8 +7,10 @@
 <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="scripts/jquery.terminal-0.8.7.min.js"></script>
+<script sroc="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 <script src="scripts/verse.js"></script>
 
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
 <link rel="stylesheet" href="css/jquery.terminal.css" />
 <link rel="stylesheet" href="css/verse.css" />
@@ -16,11 +18,12 @@
 </head>
 <body>
 
-<div class="container">
-  <div class="row">
-    <div id="console" class="span10">
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div id="console" class="col-xs-12 col-sm-10">
     </div>
-    <div class="span2">
+    <div id="palette" class="col-xs-12 col-sm-2">
+      <p><button id="help" class="btn btn-info">help</button></p>
     </div>
   </div>
 </div>

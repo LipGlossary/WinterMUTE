@@ -29,7 +29,7 @@
 .cmd {
     padding: 0;
     margin: 0;
-    height: 1.3em;
+    height: 1.4em;
     /*margin-top: 3px; */
 }
 .cmd .cursor.blink {
@@ -90,12 +90,12 @@
     font-family: Monaco, monospace;
     color: #000;
     background-color: #fff;
-    font-size: 81.3%;
+    font-size: 10pt;
     line-height: 1.4em;
 }
 .terminal-output > div {
     /*padding-top: 3px;*/
-    min-height: 16px;
+    min-height: 1.4em;
 }
 .terminal .terminal-output div span {
     display: inline-block;

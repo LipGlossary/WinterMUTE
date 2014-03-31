@@ -1,5 +1,7 @@
 jQuery ($) ->
 
+# EVENTS =======================================================================
+
   socket = io.connect()
 
   # "connecting" is emitted when the socket is attempting to connect with the server.
@@ -42,8 +44,10 @@ jQuery ($) ->
   socket.on 'anything', (data, callback) ->
     console.log 'anything: ' + data
 
+# COMMANDS =====================================================================
+
   help = ->
-    this.echo '''
+    term.echo '''
 
 COMMAND     ARGUMENTS    DESCRIPTION
 
@@ -61,14 +65,18 @@ tutorial    reset        Resets the tutorial
 
 '''
 
+# TERMINAL SETUP ===============================================================
+
+# COMMAND HANDLER
   commands =
     help: help
     echo: (arg) -> this.echo arg
 
+# PLUGIN OPTIONS
   options =
     history: true
     prompt: '> '
-    greetings: '[[b;red;white]Welcome to Winter MUTE, a multi-user text empire.]\nFor a list of commands, type "help".'
+    greetings: '[[b;red;white]Welcome to WinterMUTE, a multi-user text empire.]\nFor a list of commands, type "help".'
     processArguments: false
     outputLimit: -1
     linksNoReferer: false
@@ -79,6 +87,13 @@ tutorial    reset        Resets the tutorial
     historySize: false
     height: $(window).height()
 
-  $('#console').terminal commands, options
+# INSTANTIATION
+  term = $('#console').terminal commands, options
 
+# COMMAND PALETTE ==============================================================
+
+  $('#help').click -> help()
+
+# MISCELLANEOUS ================================================================
+  $(window).resize -> $('#console').css "height": $(window).height() + "px"
   $.terminal.active().echo 'Hello from outside!'

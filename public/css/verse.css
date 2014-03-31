@@ -3,11 +3,13 @@ html {
 }
 
 body {
-  margin: 0;
   height: 100%;
 }
 
 div#console {
   height: 100%;
-  width: 80%;
+}
+
+div#palette {
+	height: 100%;
 }
