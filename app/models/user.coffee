@@ -1,19 +1,18 @@
-# load the things we need
 mongoose = require 'mongoose'
 bcrypt   = require 'bcrypt-nodejs'
+Char     = require './char'
 
-# define the schema for our user model
-userSchema = mongoose.Schema
+User = mongoose.Schema
   email : String
   password : String
+  chars : [Char]
 
 # generating a hash
-userSchema.methods.generateHash = (password) ->
+User.methods.generateHash = (password) ->
   return bcrypt.hashSync password, bcrypt.genSaltSync(8), null
 
 # checking if password is valid
-userSchema.methods.validPassword = (password) ->
+User.methods.validPassword = (password) ->
   return bcrypt.compareSync password, @password
 
-# create the model for users and expose it to our app
-module.exports = mongoose.model 'User', userSchema
+module.exports = mongoose.model 'User', User

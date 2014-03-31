@@ -44,39 +44,28 @@ jQuery ($) ->
   socket.on 'anything', (data, callback) ->
     console.log 'anything: ' + data
 
-# COMMANDS =====================================================================
-
-  help = ->
-    term.echo '''
-
-COMMAND     ARGUMENTS    DESCRIPTION
-
-help                     List of commands
-
-echo                     Echoes any arguments
-
-
-[[;blue;white]Coming soon...]
-
-COMMAND     ARGUMENTS    DESCRIPTION
-
-tutorial    reset        Resets the tutorial
-            skip         No more tutorials will be seen
-
-'''
-
 # TERMINAL SETUP ===============================================================
 
-# COMMAND HANDLER
-  commands =
-    help: help
-    echo: (arg) -> this.echo arg
+  $.getScript './scripts/commands.js'
+
+# COMMAND HANLDER
+  handler = (command, term) ->
+    parse = $.terminal.parseCommand command
+    switch parse.name
+      when 'help' then help term
+      when 'edit' then edit parse.args, term
+      else term.echo "I'm sorry, I didn't understand the command \"#{parse.name}\"."
 
 # PLUGIN OPTIONS
   options =
     history: true
     prompt: '> '
-    greetings: '[[b;red;white]Welcome to WinterMUTE, a multi-user text empire.]\nFor a list of commands, type "help".'
+    greetings: '''
+[[b;red;white]Welcome to WinterMUTE, a multi-user text empire.]
+For a list of commands, type "help".
+As the we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.
+Version control is currently OFF. Edits cannot be undone.
+'''
     processArguments: false
     outputLimit: -1
     linksNoReferer: false
@@ -86,13 +75,14 @@ tutorial    reset        Resets the tutorial
     onBlur: (terminal) -> return false
     historySize: false
     height: $(window).height()
+    checkArity: false
 
 # INSTANTIATION
-  term = $('#console').terminal commands, options
+  term = $('#console').terminal handler, options
 
 # COMMAND PALETTE ==============================================================
 
-  $('#help').click -> help()
+  $('#help').click -> help term
 
 # MISCELLANEOUS ================================================================
   $(window).resize -> $('#console').css "height": $(window).height() + "px"
