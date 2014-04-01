@@ -1,5 +1,8 @@
 # EVENTS =======================================================================
 
+socket = io.connect()
+term = $.terminal.active()
+
 # "connecting" is emitted when the socket is attempting to connect with the server.
 socket.on 'connecting', ->
   console.log 'connecting'
@@ -32,10 +35,25 @@ socket.on 'reconnect_failed', ->
 socket.on 'error', ->
   console.log 'error'
 
-# "message" is emitted when a message sent with socket.send is received. message is the sent message, and callback is an optional acknowledgement function.
-socket.on 'message', (message, callback) ->
-  console.log 'message: ' + message
+# # "message" is emitted when a message sent with socket.send is received. message is the sent message, and callback is an optional acknowledgement function.
+# socket.on 'message', (message, callback) ->
+#   console.log 'message: ' + message
 
 # "anything" can be any event except for the reserved ones. data is data, and callback can be used to send a reply.
 socket.on 'anything', (data, callback) ->
   console.log 'anything: ' + data
+
+socket.on 'message', (message) ->
+  term.echo message
+
+socket.on 'prompt', (data) ->
+  term.echo data.message
+  term.push(
+    (input, term) ->
+      if !data.args then data.args = []
+      data.args.push $.terminal.parseArguments(input)[0]
+      socket.emit data.command, data.args
+      term.pop()
+      return
+    prompt: '? > '
+  )

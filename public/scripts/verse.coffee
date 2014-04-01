@@ -1,9 +1,6 @@
 jQuery ($) ->
 
-# EVENTS =======================================================================
-
   socket = io.connect()
-  $.getScript './scripts/events.js'
 
 # TERMINAL SETUP ===============================================================
 
@@ -16,19 +13,21 @@ jQuery ($) ->
       when 'help' then help term
       when 'edit'
         socket.emit 'edit', parse.args
-        console.log 'Emitted edit.'
+        return
       else term.echo "I'm sorry, I didn't understand the command \"#{parse.name}\"."
 
 # PLUGIN OPTIONS
-  options =
-    history: true
-    prompt: '> '
-    greetings: '''
+  greeting = '''
 [[b;red;white]Welcome to WinterMUTE, a multi-user text empire.]
 For a list of commands, type "help".
 As the we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.
 Version control is currently OFF. Edits cannot be undone.
+
 '''
+  options =
+    history: true
+    prompt: '> '
+    greetings: greeting
     processArguments: false
     outputLimit: -1
     linksNoReferer: false
@@ -46,6 +45,9 @@ Version control is currently OFF. Edits cannot be undone.
 # COMMAND PALETTE ==============================================================
 
   $('#help').click -> help term
+
+# EVENTS =======================================================================
+  $.getScript './scripts/events.js'
 
 # MISCELLANEOUS ================================================================
   $(window).resize -> $('#console').css "height": $(window).height() + "px"
