@@ -57,3 +57,7 @@ socket.on 'prompt', (data) ->
       return
     prompt: '? > '
   )
+
+socket.on 'create-char', ->
+  term.pause()
+  $('#create-char').css "visibility", "visible"

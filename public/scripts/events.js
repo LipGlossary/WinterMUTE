@@ -60,4 +60,9 @@
     });
   });
 
+  socket.on('create-char', function() {
+    term.pause();
+    return $('#create-char').css("visibility", "visible");
+  });
+
 }).call(this);

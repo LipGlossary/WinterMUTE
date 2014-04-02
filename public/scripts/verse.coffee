@@ -11,10 +11,10 @@ jQuery ($) ->
     parse = $.terminal.parseCommand command
     switch parse.name
       when 'help' then help term
-      when 'edit'
-        socket.emit 'edit', parse.args
-        return
+      when 'edit' then socket.emit 'edit', parse.args
+      when 'create' then socket.emit 'create', parse.args
       else term.echo "I'm sorry, I didn't understand the command \"#{parse.name}\"."
+    return
 
 # PLUGIN OPTIONS
   greeting = '''
@@ -47,7 +47,24 @@ Version control is currently OFF. Edits cannot be undone.
   $('#help').click -> help term
 
 # EVENTS =======================================================================
+
   $.getScript './scripts/events.js'
+
+# FORMS ========================================================================
+
+  $('#create-char button').click ->
+    $('#create-char').css "visibility", "hidden"
+    term.resume()
+
+  $('#create-char-form').on 'submit', (event) ->
+    event.preventDefault()
+    socket.emit 'create-char',
+      name : $('#create-char-form input[name="name"]').val()
+      list : $('#create-char-form input[name="list"]').val()
+      look : $('#create-char-form textarea[name="look"]').val()
+      move : $('#create-char-form input[name="move"]').val()
+      appear : $('#create-char-form input[name="appear"]').val()
+    $('#create-char-form').reset()
 
 # MISCELLANEOUS ================================================================
   $(window).resize -> $('#console').css "height": $(window).height() + "px"

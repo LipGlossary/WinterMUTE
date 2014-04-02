@@ -5,7 +5,7 @@ Char     = require './char'
 User = mongoose.Schema
   email : String
   password : String
-  chars : [Char]
+  chars : [Char.schema]
 
 # generating a hash
 User.methods.generateHash = (password) ->

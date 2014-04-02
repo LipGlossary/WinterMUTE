@@ -40,11 +40,15 @@
         message: req.flash('loginMessage')
       });
     });
-    return app.post('/change', passport.authenticate('signup', {
+    app.post('/change', passport.authenticate('signup', {
       successRedirect: '/verse',
       failureRedirect: '/change',
       failureFlash: true
     }));
+    return app.post('/create-char', function(req) {
+      console.log("SESSION: " + JSON.stringify(req.session));
+      return console.log("BODY: " + JSON.stringify(req.body));
+    });
   };
 
   isLoggedIn = function(req, res, next) {

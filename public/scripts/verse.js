@@ -9,12 +9,16 @@
       parse = $.terminal.parseCommand(command);
       switch (parse.name) {
         case 'help':
-          return help(term);
+          help(term);
+          break;
         case 'edit':
           socket.emit('edit', parse.args);
           break;
+        case 'create':
+          socket.emit('create', parse.args);
+          break;
         default:
-          return term.echo("I'm sorry, I didn't understand the command \"" + parse.name + "\".");
+          term.echo("I'm sorry, I didn't understand the command \"" + parse.name + "\".");
       }
     };
     greeting = '[[b;red;white]Welcome to WinterMUTE, a multi-user text empire.]\nFor a list of commands, type "help".\nAs the we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.\nVersion control is currently OFF. Edits cannot be undone.\n';
@@ -40,6 +44,21 @@
       return help(term);
     });
     $.getScript('./scripts/events.js');
+    $('#create-char button').click(function() {
+      $('#create-char').css("visibility", "hidden");
+      return term.resume();
+    });
+    $('#create-char-form').on('submit', function(event) {
+      event.preventDefault();
+      socket.emit('create-char', {
+        name: $('#create-char-form input[name="name"]').val(),
+        list: $('#create-char-form input[name="list"]').val(),
+        look: $('#create-char-form textarea[name="look"]').val(),
+        move: $('#create-char-form input[name="move"]').val(),
+        appear: $('#create-char-form input[name="appear"]').val()
+      });
+      return $('#create-char-form').reset();
+    });
     $(window).resize(function() {
       return $('#console').css({
         "height": $(window).height() + "px"

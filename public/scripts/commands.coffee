@@ -1,13 +1,18 @@
 @help = (term) -> term.echo '''
 
-COMMAND     ARGUMENTS       DESCRIPTION
+COMMAND     ARGUMENTS         DESCRIPTION
 
-help        N/A             List of commands
+help        N/A               List of commands
 
-edit                        Edit anything
-            self            Edit your out-of-character self
-            char            Edit a characters
-            room            Edit a room
+create                        Create anything
+            char              Create a new character
+            room              Create a new room
+            object            Create a new object
+
+edit                          Edit anything
+            self              Edit your out-of-character self
+            char              Edit a characters
+            room              Edit a room
 
 [[;blue;white]Coming soon...]
 

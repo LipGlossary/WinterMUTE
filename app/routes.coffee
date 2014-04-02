@@ -5,7 +5,7 @@ module.exports = (app, passport) ->
   # show the home page (will also have our login links)
   app.get '/', (req, res) -> res.render 'index.ejs'
 
-  # LIVE MUSH ====================================
+  # LIVE MUTE ====================================
   app.get '/verse', isLoggedIn, (req, res) ->
     res.render 'verse.ejs', user: req.user
 
@@ -57,6 +57,12 @@ module.exports = (app, passport) ->
     failureRedirect : '/change'
       # redirect back to the signup page if there is an error
     failureFlash : true # allow flash messages
+
+  # REALTIME ROUTES ============================================================
+
+  app.post '/create-char', (req) ->
+    console.log "SESSION: " + JSON.stringify(req.session)
+    console.log "BODY: " + JSON.stringify(req.body)
 
 # ==============================================================================
 # MIDDLEWARE ===================================================================
