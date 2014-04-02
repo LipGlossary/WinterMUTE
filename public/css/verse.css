@@ -15,6 +15,11 @@ div#palette {
 	padding-top: 10px;
 }
 
+button#create-char-btn,
+button#create-btn-cancel {
+	visibility: hidden;
+}
+
 div#create-char {
 	position: absolute;
 	top: 0px;

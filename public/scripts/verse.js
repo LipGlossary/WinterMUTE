@@ -43,6 +43,23 @@
     $('#help').click(function() {
       return help(term);
     });
+    $('#create-btn').click(function() {
+      $('#create-btn').css("visibility", "hidden");
+      $('#create-char-btn').css("visibility", "visible");
+      return $('#create-btn-cancel').css("visibility", "visible");
+    });
+    $('#create-char-btn').click(function() {
+      $('#create-char-btn').css("visibility", "hidden");
+      $('#create-btn-cancel').css("visibility", "hidden");
+      $('#create-btn').css("visibility", "visible");
+      term.pause();
+      return $('#create-char').css("visibility", "visible");
+    });
+    $('#create-btn-cancel').click(function() {
+      $('#create-char-btn').css("visibility", "hidden");
+      $('#create-btn-cancel').css("visibility", "hidden");
+      return $('#create-btn').css("visibility", "visible");
+    });
     $.getScript('./scripts/events.js');
     $('#create-char button').click(function() {
       $('#create-char').css("visibility", "hidden");

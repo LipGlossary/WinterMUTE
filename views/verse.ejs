@@ -28,12 +28,13 @@
       <p>chars.length: <%= user.chars.length %></p>
       <% if (user.chars.length > 0) { %>
         <p>self.name: <%= user.chars[0].name %></p>
-        <p>self.list: <%= user.chars[0].list %></p>
-        <p>self.look: <%= user.chars[0].look %></p>
-        <p>self.move: <%= user.chars[0].move %></p>
-        <p>self.appear: <%= user.chars[0].appear %></p>
       <% } %>
       <p><button id="help" class="btn btn-info">help</button></p>
+      <p>
+        <button id="create-btn" class="btn btn-info">create</button>
+        <button id="create-char-btn" class="btn btn-info">create character</button>
+        <button id="create-btn-cancel" class="btn btn-default">X</button>
+      </p>
     </div>
   </div>
 </div>

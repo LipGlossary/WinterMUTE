@@ -45,6 +45,20 @@ Version control is currently OFF. Edits cannot be undone.
 # COMMAND PALETTE ==============================================================
 
   $('#help').click -> help term
+  $('#create-btn').click ->
+    $('#create-btn').css "visibility", "hidden"
+    $('#create-char-btn').css "visibility", "visible"
+    $('#create-btn-cancel').css "visibility", "visible"
+  $('#create-char-btn').click ->
+    $('#create-char-btn').css "visibility", "hidden"
+    $('#create-btn-cancel').css "visibility", "hidden"
+    $('#create-btn').css "visibility", "visible"
+    term.pause()
+    $('#create-char').css "visibility", "visible"
+  $('#create-btn-cancel').click ->
+    $('#create-char-btn').css "visibility", "hidden"
+    $('#create-btn-cancel').css "visibility", "hidden"
+    $('#create-btn').css "visibility", "visible"
 
 # EVENTS =======================================================================
 

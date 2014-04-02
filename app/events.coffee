@@ -19,11 +19,8 @@ module.exports = (app) ->
     switch req.data[0]
       when 'self' then "Sorry, I cannot edit characters at this time." # edit-char, 0
       when 'char'
-        console.log "req.session.passport.user: " + JSON.stringify(req.session.passport.user)
         User.findById req.session.passport.user, (err, data) ->
-          if err?
-            console.log "ERROR: " + err
-            req.io.emit 'error', err
+          if err? req.io.emit 'error', err
           else
             if data.chars.length < 2 then req.io.emit 'message', "You don't have any characters to edit."
             else req.io.emit 'message', "Sorry, I can't edit characters at this time."

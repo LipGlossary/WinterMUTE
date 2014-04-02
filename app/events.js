@@ -30,11 +30,9 @@
         case 'self':
           return "Sorry, I cannot edit characters at this time.";
         case 'char':
-          console.log("req.session.passport.user: " + JSON.stringify(req.session.passport.user));
           return User.findById(req.session.passport.user, function(err, data) {
-            if (err != null) {
-              console.log("ERROR: " + err);
-              return req.io.emit('error', err);
+            if (typeof err === "function" ? err(req.io.emit('error', err)) : void 0) {
+
             } else {
               if (data.chars.length < 2) {
                 return req.io.emit('message', "You don't have any characters to edit.");
