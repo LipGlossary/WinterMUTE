@@ -26,9 +26,6 @@
     <div id="palette" class="col-xs-12 col-sm-2">
       <p>Hello <%= user.email %></p>
       <p>chars.length: <%= user.chars.length %></p>
-      <% if (user.chars.length > 0) { %>
-        <p>self.name: <%= user.chars[0].name %></p>
-      <% } %>
       <p><button id="help" class="btn btn-info">help</button></p>
       <p>
         <button id="create-btn" class="btn btn-info">create</button>
@@ -78,6 +75,58 @@
             <div class="input-group">
               <span class="input-group-addon">&lt;Name&gt; [dis]appears</span>
               <input type="text" class="form-control" name="appear" placeholder="in a puff of smoke">
+              <span class="input-group-addon">.</span>
+            </div>
+          </div>
+          <p>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-default">Cancel</button>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="edit-char">
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="inner-form col-xs-12 col-sm-6 col-sm-offset-3">
+        <form id="edit-char-form">
+          <h3>Create a new character</h3>
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" class="form-control" name="name">
+          </div>
+          <div class="form-group">
+            <label>List</label>
+            <p class="help-block">This is what is displayed when a user lists a room's contents.<p>
+            <div class="input-group">
+              <span class="input-group-addon">&lt;Name&gt;,</span>
+              <input type="text" class="form-control" name="list">
+              <span class="input-group-addon">, is here.</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Look</label>
+            <p class="help-block">This is what is displayed when a user looks at you.<p>
+            <textarea class="form-control" rows="3" name="look"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Move</label>
+            <p class="help-block">This is what is displayed when you move in and out of a room.<p>
+            <div class="input-group">
+              <span class="input-group-addon">&lt;Name&gt;</span>
+              <input type="text" class="form-control" name="move">
+              <span class="input-group-addon">[in from the] north.</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Appear</label>
+            <p class="help-block">This is what is displayed when you become visible or invisible.<p>
+            <div class="input-group">
+              <span class="input-group-addon">&lt;Name&gt; [dis]appears</span>
+              <input type="text" class="form-control" name="appear">
               <span class="input-group-addon">.</span>
             </div>
           </div>
