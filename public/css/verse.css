@@ -32,7 +32,9 @@ div#info {
 }
 
 button#create-char-btn,
-button#create-btn-cancel {
+button#create-btn-cancel,
+button#edit-self-btn,
+button#edit-btn-cancel {
 	display: none;
 }
 
