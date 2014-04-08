@@ -61,3 +61,12 @@ socket.on 'prompt', (data) ->
 socket.on 'create-char', ->
   term.pause()
   $('#create-char').css "visibility", "visible"
+
+socket.on 'edit-char', (data) ->
+  term.pause()
+  $('#edit-char-form input[name="name"]').val(data.name)
+  $('#edit-char-form input[name="list"]').val(data.list)
+  $('#edit-char-form textarea[name="look"]').val(data.look)
+  $('#edit-char-form input[name="move"]').val(data.move)
+  $('#edit-char-form input[name="appear"]').val(data.appear)
+  $('#edit-char').css "visibility", "visible"

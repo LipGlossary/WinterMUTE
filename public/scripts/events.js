@@ -65,4 +65,14 @@
     return $('#create-char').css("visibility", "visible");
   });
 
+  socket.on('edit-char', function(data) {
+    term.pause();
+    $('#edit-char-form input[name="name"]').val(data.name);
+    $('#edit-char-form input[name="list"]').val(data.list);
+    $('#edit-char-form textarea[name="look"]').val(data.look);
+    $('#edit-char-form input[name="move"]').val(data.move);
+    $('#edit-char-form input[name="appear"]').val(data.appear);
+    return $('#edit-char').css("visibility", "visible");
+  });
+
 }).call(this);

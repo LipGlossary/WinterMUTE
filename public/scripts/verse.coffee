@@ -66,19 +66,7 @@ Version control is currently OFF. Edits cannot be undone.
 
 # FORMS ========================================================================
 
-  $('#create-char button').click ->
-    $('#create-char').css "visibility", "hidden"
-    term.resume()
-
-  $('#create-char-form').on 'submit', (event) ->
-    event.preventDefault()
-    socket.emit 'create-char',
-      name : $('#create-char-form input[name="name"]').val()
-      list : $('#create-char-form input[name="list"]').val()
-      look : $('#create-char-form textarea[name="look"]').val()
-      move : $('#create-char-form input[name="move"]').val()
-      appear : $('#create-char-form input[name="appear"]').val()
-    $('#create-char-form').reset()
+  $.getScript './scripts/forms.js'
 
 # MISCELLANEOUS ================================================================
   $(window).resize -> $('#console').css "height": $(window).height() + "px"

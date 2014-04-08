@@ -1,11 +1,13 @@
 mongoose = require 'mongoose'
 bcrypt   = require 'bcrypt-nodejs'
-Char     = require './char'
 
 User = mongoose.Schema
   email : String
   password : String
-  chars : [Char.schema]
+  chars : [
+  	type: mongoose.Schema.Types.ObjectId
+  	ref: 'Char'
+  ]
 
 # generating a hash
 User.methods.generateHash = (password) ->

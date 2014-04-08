@@ -20,7 +20,8 @@ button#create-btn-cancel {
 	visibility: hidden;
 }
 
-div#create-char {
+div#create-char,
+div#edit-char {
 	position: absolute;
 	top: 0px;
 	left: 0px;
