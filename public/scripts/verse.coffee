@@ -45,6 +45,9 @@ Version control is currently OFF. Edits cannot be undone.
 # COMMAND PALETTE ==============================================================
 
   $('#help').click -> help term
+
+  # TO DO: create some lovely JQuery toggle system for multiple buttons
+  
   $('#create-btn').click ->
     $('#create-btn').css "visibility", "hidden"
     $('#create-char-btn').css "visibility", "visible"
@@ -59,6 +62,20 @@ Version control is currently OFF. Edits cannot be undone.
     $('#create-char-btn').css "visibility", "hidden"
     $('#create-btn-cancel').css "visibility", "hidden"
     $('#create-btn').css "visibility", "visible"
+    
+  $('#edit-btn').click ->
+    $('#edit-btn').css "visibility", "hidden"
+    $('#edit-self-btn').css "visibility", "visible"
+    $('#edit-btn-cancel').css "visibility", "visible"
+  $('#edit-self-btn').click ->
+    $('#edit-self-btn').css "visibility", "hidden"
+    $('#edit-btn-cancel').css "visibility", "hidden"
+    $('#edit-btn').css "visibility", "visible"
+    socket.emit 'edit', ['self']
+  $('#edit-btn-cancel').click ->
+    $('#edit-self-btn').css "visibility", "hidden"
+    $('#edit-btn-cancel').css "visibility", "hidden"
+    $('#edit-btn').css "visibility", "visible"
 
 # EVENTS =======================================================================
 

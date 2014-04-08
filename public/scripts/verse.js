@@ -60,6 +60,22 @@
       $('#create-btn-cancel').css("visibility", "hidden");
       return $('#create-btn').css("visibility", "visible");
     });
+    $('#edit-btn').click(function() {
+      $('#edit-btn').css("visibility", "hidden");
+      $('#edit-self-btn').css("visibility", "visible");
+      return $('#edit-btn-cancel').css("visibility", "visible");
+    });
+    $('#edit-self-btn').click(function() {
+      $('#edit-self-btn').css("visibility", "hidden");
+      $('#edit-btn-cancel').css("visibility", "hidden");
+      $('#edit-btn').css("visibility", "visible");
+      return socket.emit('edit', ['self']);
+    });
+    $('#edit-btn-cancel').click(function() {
+      $('#edit-self-btn').css("visibility", "hidden");
+      $('#edit-btn-cancel').css("visibility", "hidden");
+      return $('#edit-btn').css("visibility", "visible");
+    });
     $.getScript('./scripts/events.js');
     $.getScript('./scripts/forms.js');
     $(window).resize(function() {

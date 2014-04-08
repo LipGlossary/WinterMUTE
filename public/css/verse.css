@@ -16,7 +16,9 @@ div#palette {
 }
 
 button#create-char-btn,
-button#create-btn-cancel {
+button#create-btn-cancel,
+button#edit-self-btn,
+button#edit-btn-cancel {
 	visibility: hidden;
 }
 
