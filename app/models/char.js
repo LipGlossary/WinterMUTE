@@ -5,6 +5,11 @@
   mongoose = require('mongoose');
 
   Char = mongoose.Schema({
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Char',
+      required: true
+    },
     name: {
       type: String,
       unique: true,
