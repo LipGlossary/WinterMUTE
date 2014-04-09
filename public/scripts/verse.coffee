@@ -61,7 +61,9 @@ Version control is currently OFF. Edits cannot be undone.
     $('#create-btn-cancel').css "visibility", "hidden"
     $('#create-btn').css "visibility", "visible"
     term.pause()
-    $('#create-char').css "visibility", "visible"
+    $('#char-form button[data-cmd="edit"]').css "visibility", "hidden"
+    $('#char-form button[data-cmd="create"]').css "visibility", "visible"
+    $('#char').css "visibility", "visible"
   $('#create-btn-cancel').click ->
     $('#create-char-btn').css "visibility", "hidden"
     $('#create-btn-cancel').css "visibility", "hidden"

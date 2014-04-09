@@ -61,7 +61,9 @@
       $('#create-btn-cancel').css("visibility", "hidden");
       $('#create-btn').css("visibility", "visible");
       term.pause();
-      return $('#create-char').css("visibility", "visible");
+      $('#char-form button[data-cmd="edit"]').css("visibility", "hidden");
+      $('#char-form button[data-cmd="create"]').css("visibility", "visible");
+      return $('#char').css("visibility", "visible");
     });
     $('#create-btn-cancel').click(function() {
       $('#create-char-btn').css("visibility", "hidden");
