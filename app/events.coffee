@@ -4,21 +4,15 @@ Char = require '../app/models/char'
 
 module.exports = (app) ->
 
-  app.io.route 'create', (req) ->
-    switch req.data[0]
-      when 'char' then req.io.emit 'create-char'
-      when 'room' then req.io.emit 'message', "I'm sorry, I cannot create rooms at this time."
-      when 'object' then req.io.emit 'message', "I'm sorry, I cannot creat objects at this time."
-      when undefined
-        req.io.emit 'prompt',
-          message : "What would you like to create?\n    char    room    object"
-          command : 'create'
-          args : req.data
-      else req.io.emit 'message', "I cannot edit \"#{req.data[0]}\"."
+  commands =
+    'create' :
+      'char'   : (req) -> req.io.emit 'create-char'
+      'room'   : (req) -> req.io.emit 'message', "I'm sorry, I cannot create rooms at this time."
+      'object' : (req) -> req.io.emit 'message', "I'm sorry, I cannot creat objects at this time."
+    
+    'edit' :
 
-  app.io.route 'edit', (req) ->
-    switch req.data[0]
-      when 'self'
+      'self' : (req) ->
         User
         .findById req.session.passport.user
         .exec (err, user) ->
@@ -31,7 +25,8 @@ module.exports = (app) ->
               else
                 req.session.editId = user.chars[0]._id ? user.chars[0]
                 req.io.emit 'edit-char', char
-      when 'char'
+
+      'char' : (req) ->
         User
         .findById req.session.passport.user
         .exec (err, user) ->
@@ -54,14 +49,35 @@ module.exports = (app) ->
                   req.io.emit 'edit-char', char
                   return
               req.io.emit 'message', "Sorry, you can't edit character \"#{req.data[1]}\".\n    TIP: Did you spell it correctly?\n    TIP: If your character's name has a space in it, you must enclose it in quotes."
-      when 'room' then req.io.emit 'message', "Sorry, I can't edit rooms at this time."
-      when 'object' then req.io.emit 'message', "Sorry, I can't edit objects at this time."
-      when undefined
+
+      'room' : (req) -> req.io.emit 'message', "Sorry, I can't edit rooms at this time."
+      
+      'object' : (req) -> req.io.emit 'message', "Sorry, I can't edit objects at this time."
+
+  app.io.route 'create', (req) ->
+    unless commands['create'][req.data[0]]?(req)
+      if not req.data[0]?
+        req.io.emit 'prompt',
+        message : "What would you like to create?\n    char    room    object"
+        command : 'create'
+        args : req.data
+      else req.io.emit 'message', "I cannot edit \"#{req.data[0]}\"."
+
+  app.io.route 'edit', (req) ->
+    unless commands['edit'][req.data[0]]?(req)
+      if req.data[0]?
         req.io.emit 'prompt',
           message : 'What would you like to edit?\n    self    char    room    object'
           command : 'edit'
           args : req.data
       else req.io.emit 'message', "I cannot edit \"#{req.data[0]}\"."
+
+  charErrors =
+    'name'   : (err, req) -> req.io.emit 'message', "The character must have a name."
+    'list'   : (err, req) -> req.io.emit 'message', "The character must have a short description (\"list\" command)."
+    'look'   : (err, req) -> req.io.emit 'message', "The character must have a long description (\"look\" command)."
+    'move'   : (err, req) -> req.io.emit 'message', "The character must have a movement description."
+    'appear' : (err, req) -> req.io.emit 'message', "The character must have a [dis]appearance description."
 
   app.io.route 'create-char', (req) ->
     newChar = 
@@ -71,18 +87,11 @@ module.exports = (app) ->
       move : req.data.move
       appear : req.data.appear
     Char.create newChar, (charErr, charData) ->
-      if charErr? then for key, value of charErr.errors
-        switch value.path
-          when 'name'
-            switch value.type
-              when 'unique' then req.io.emit 'message', "There is already a character with that name."
-              when 'required' then req.io.emit 'message', "The character must have a name."
-              else req.io.emit 'error', charErr
-          when 'list' then req.io.emit 'message', "The character must have a short description (\"list\" command)."
-          when 'look' then req.io.emit 'message', "The character must have a long description (\"look\" command)."
-          when 'move' then req.io.emit 'message', "The character must have a movement description."
-          when 'appear' then req.io.emit 'message', "The character must have a [dis]appearance description."
-          else req.io.emit 'error', charErr
+      if charErr?
+        if charErr.code == 11000
+          req.io.emit 'message', "A character with that name already exists."
+        for key of charErr.errors when not charErrors[key]?(charErr, req)
+          req.io.emit 'error', charErr
       else
         User
         .findByIdAndUpdate req.session.passport.user,
@@ -103,16 +112,8 @@ module.exports = (app) ->
         appear : req.data.appear
     .exec (err, data) ->
       if err?
-        for key, value of err.errors
-          switch value.path
-            when 'name'
-              switch value.type
-                when 'unique' then req.io.emit 'message', "There is already a character with that name."
-                when 'required' then req.io.emit 'message', "The character must have a name."
-                else req.io.emit 'error', err
-            when 'list' then req.io.emit 'message', "The character must have a short description (\"list\" command)."
-            when 'look' then req.io.emit 'message', "The character must have a long description (\"look\" command)."
-            when 'move' then req.io.emit 'message', "The character must have a movement description."
-            when 'appear' then req.io.emit 'message', "The character must have a [dis]appearance description."
-            else req.io.emit 'error', err
+        if err.code == 11000
+          req.io.emit 'message', "A character with that name already exists."
+        for key of err.errors when not charErrors[key]?(err, req)
+          req.io.emit 'error', err
       else req.io.emit 'message', "The character \"#{req.data.name}\" was saved!"

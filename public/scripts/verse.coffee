@@ -7,13 +7,16 @@ jQuery ($) ->
   $.getScript './scripts/commands.js'
 
 # COMMAND HANLDER
+
+  commands =
+    'help'   :        -> help term
+    'edit'   : (args) -> socket.emit 'edit', args
+    'create' : (args) -> socket.emit 'create', args
+
   handler = (command, term) ->
     parse = $.terminal.parseCommand command
-    switch parse.name
-      when 'help' then help term
-      when 'edit' then socket.emit 'edit', parse.args
-      when 'create' then socket.emit 'create', parse.args
-      else term.echo "I'm sorry, I didn't understand the command \"#{parse.name}\"."
+    unless commands[parse.name]?(parse.args)
+      term.echo "I'm sorry, I didn't understand the command \"#{parse.name}\"."
     return
 
 # PLUGIN OPTIONS

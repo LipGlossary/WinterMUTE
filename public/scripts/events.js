@@ -48,7 +48,7 @@
 
   socket.on('prompt', function(data) {
     term.echo(data.message);
-    term.echo("TIP: Enter \"q\" to cancel.");
+    term.echo("    TIP: Enter \"q\" to cancel.");
     return term.push(function(input, term) {
       if (!data.args) {
         data.args = [];

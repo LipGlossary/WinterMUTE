@@ -9,27 +9,21 @@
   Char = require('../app/models/char');
 
   module.exports = function(app) {
-    app.io.route('create', function(req) {
-      switch (req.data[0]) {
-        case 'char':
+    var charErrors, commands;
+    commands = {
+      'create': {
+        'char': function(req) {
           return req.io.emit('create-char');
-        case 'room':
+        },
+        'room': function(req) {
           return req.io.emit('message', "I'm sorry, I cannot create rooms at this time.");
-        case 'object':
+        },
+        'object': function(req) {
           return req.io.emit('message', "I'm sorry, I cannot creat objects at this time.");
-        case void 0:
-          return req.io.emit('prompt', {
-            message: "What would you like to create?\n    char    room    object",
-            command: 'create',
-            args: req.data
-          });
-        default:
-          return req.io.emit('message', "I cannot edit \"" + req.data[0] + "\".");
-      }
-    });
-    app.io.route('edit', function(req) {
-      switch (req.data[0]) {
-        case 'self':
+        }
+      },
+      'edit': {
+        'self': function(req) {
           return User.findById(req.session.passport.user).exec(function(err, user) {
             if (err != null) {
               return req.io.emit('error', err);
@@ -45,7 +39,8 @@
               });
             }
           });
-        case 'char':
+        },
+        'char': function(req) {
           return User.findById(req.session.passport.user).exec(function(err, user) {
             if (err != null) {
               return req.io.emit('error', err);
@@ -85,20 +80,60 @@
               });
             }
           });
-        case 'room':
+        },
+        'room': function(req) {
           return req.io.emit('message', "Sorry, I can't edit rooms at this time.");
-        case 'object':
+        },
+        'object': function(req) {
           return req.io.emit('message', "Sorry, I can't edit objects at this time.");
-        case void 0:
+        }
+      }
+    };
+    app.io.route('create', function(req) {
+      var _base, _name;
+      if (!(typeof (_base = commands['create'])[_name = req.data[0]] === "function" ? _base[_name](req) : void 0)) {
+        if (req.data[0] == null) {
+          return req.io.emit('prompt', {
+            message: "What would you like to create?\n    char    room    object",
+            command: 'create',
+            args: req.data
+          });
+        } else {
+          return req.io.emit('message', "I cannot edit \"" + req.data[0] + "\".");
+        }
+      }
+    });
+    app.io.route('edit', function(req) {
+      var _base, _name;
+      if (!(typeof (_base = commands['edit'])[_name = req.data[0]] === "function" ? _base[_name](req) : void 0)) {
+        if (req.data[0] != null) {
           return req.io.emit('prompt', {
             message: 'What would you like to edit?\n    self    char    room    object',
             command: 'edit',
             args: req.data
           });
-        default:
+        } else {
           return req.io.emit('message', "I cannot edit \"" + req.data[0] + "\".");
+        }
       }
     });
+    charErrors = {
+      'name': function(err, req) {
+        return req.io.emit('message', "The character must have a name.");
+      },
+      'list': function(err, req) {
+        return req.io.emit('message', "The character must have a short description (\"list\" command).");
+      },
+      'look': function(err, req) {
+        return req.io.emit('message', "The character must have a long description (\"look\" command).");
+      },
+      'move': function(err, req) {
+        return req.io.emit('message', "The character must have a movement description.");
+      },
+      'appear': function(err, req) {
+        return req.io.emit('message', "The character must have a [dis]appearance description.");
+      }
+    };
     app.io.route('create-char', function(req) {
       var newChar;
       newChar = {
@@ -109,39 +144,15 @@
         appear: req.data.appear
       };
       return Char.create(newChar, function(charErr, charData) {
-        var key, value, _ref, _results;
+        var key, _results;
         if (charErr != null) {
-          _ref = charErr.errors;
+          if (charErr.code === 11000) {
+            req.io.emit('message', "A character with that name already exists.");
+          }
           _results = [];
-          for (key in _ref) {
-            value = _ref[key];
-            switch (value.path) {
-              case 'name':
-                switch (value.type) {
-                  case 'unique':
-                    _results.push(req.io.emit('message', "There is already a character with that name."));
-                    break;
-                  case 'required':
-                    _results.push(req.io.emit('message', "The character must have a name."));
-                    break;
-                  default:
-                    _results.push(req.io.emit('error', charErr));
-                }
-                break;
-              case 'list':
-                _results.push(req.io.emit('message', "The character must have a short description (\"list\" command)."));
-                break;
-              case 'look':
-                _results.push(req.io.emit('message', "The character must have a long description (\"look\" command)."));
-                break;
-              case 'move':
-                _results.push(req.io.emit('message', "The character must have a movement description."));
-                break;
-              case 'appear':
-                _results.push(req.io.emit('message', "The character must have a [dis]appearance description."));
-                break;
-              default:
-                _results.push(req.io.emit('error', charErr));
+          for (key in charErr.errors) {
+            if (!(typeof charErrors[key] === "function" ? charErrors[key](charErr, req) : void 0)) {
+              _results.push(req.io.emit('error', charErr));
             }
           }
           return _results;
@@ -170,39 +181,15 @@
           appear: req.data.appear
         }
       }).exec(function(err, data) {
-        var key, value, _ref, _results;
+        var key, _results;
         if (err != null) {
-          _ref = err.errors;
+          if (err.code === 11000) {
+            req.io.emit('message', "A character with that name already exists.");
+          }
           _results = [];
-          for (key in _ref) {
-            value = _ref[key];
-            switch (value.path) {
-              case 'name':
-                switch (value.type) {
-                  case 'unique':
-                    _results.push(req.io.emit('message', "There is already a character with that name."));
-                    break;
-                  case 'required':
-                    _results.push(req.io.emit('message', "The character must have a name."));
-                    break;
-                  default:
-                    _results.push(req.io.emit('error', err));
-                }
-                break;
-              case 'list':
-                _results.push(req.io.emit('message', "The character must have a short description (\"list\" command)."));
-                break;
-              case 'look':
-                _results.push(req.io.emit('message', "The character must have a long description (\"look\" command)."));
-                break;
-              case 'move':
-                _results.push(req.io.emit('message', "The character must have a movement description."));
-                break;
-              case 'appear':
-                _results.push(req.io.emit('message', "The character must have a [dis]appearance description."));
-                break;
-              default:
-                _results.push(req.io.emit('error', err));
+          for (key in err.errors) {
+            if (!(typeof charErrors[key] === "function" ? charErrors[key](err, req) : void 0)) {
+              _results.push(req.io.emit('error', err));
             }
           }
           return _results;

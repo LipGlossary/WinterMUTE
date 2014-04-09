@@ -48,7 +48,7 @@ socket.on 'message', (message) ->
 
 socket.on 'prompt', (data) ->
   term.echo data.message
-  term.echo "TIP: Enter \"q\" to cancel."
+  term.echo "    TIP: Enter \"q\" to cancel."
   term.push(
     (input, term) ->
       if !data.args then data.args = []
