@@ -48,12 +48,16 @@
 
   socket.on('prompt', function(data) {
     term.echo(data.message);
+    term.echo("TIP: Enter \"q\" to cancel.");
     return term.push(function(input, term) {
       if (!data.args) {
         data.args = [];
       }
-      data.args.push($.terminal.parseArguments(input)[0]);
-      socket.emit(data.command, data.args);
+      input = $.terminal.parseArguments(input)[0];
+      if (input !== 'q') {
+        data.args.push(input);
+        socket.emit(data.command, data.args);
+      }
       term.pop();
     }, {
       prompt: '? > '

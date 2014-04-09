@@ -30,30 +30,59 @@
     app.io.route('edit', function(req) {
       switch (req.data[0]) {
         case 'self':
-          return User.findById(req.session.passport.user, function(err, user) {
+          return User.findById(req.session.passport.user).exec(function(err, user) {
             if (err != null) {
               return req.io.emit('error', err);
             } else {
-              return Char.findById(user.chars[0], function(err, char) {
+              return Char.findById(user.chars[0]).exec(function(err, char) {
+                var _ref;
                 if (err != null) {
                   return req.io.emit('error', err);
                 } else {
-                  req.session.editId = user.chars[0];
+                  req.session.editId = (_ref = user.chars[0]._id) != null ? _ref : user.chars[0];
                   return req.io.emit('edit-char', char);
                 }
               });
             }
           });
         case 'char':
-          return User.findById(req.session.passport.user, function(err, user) {
+          return User.findById(req.session.passport.user).exec(function(err, user) {
             if (err != null) {
               return req.io.emit('error', err);
+            } else if (user.chars.length < 2) {
+              return req.io.emit('message', "You don't have any characters to edit.");
             } else {
-              if (user.chars.length < 2) {
-                return req.io.emit('message', "You don't have any characters to edit.");
-              } else {
-                return req.io.emit('message', "Sorry, I can't edit characters at this time.");
-              }
+              return user.populate('chars', function(err, user) {
+                var char, charList, index, _i, _j, _len, _len1, _ref, _ref1;
+                if (err != null) {
+                  return req.io.emit('error', err);
+                } else if (req.data[1] == null) {
+                  charList = "";
+                  _ref = user.chars;
+                  for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+                    char = _ref[index];
+                    if (index > 0) {
+                      charList += "    " + char.name;
+                    }
+                  }
+                  return req.io.emit('prompt', {
+                    message: 'Which character would you like to edit?\n' + charList,
+                    command: 'edit',
+                    args: req.data
+                  });
+                } else {
+                  _ref1 = user.chars;
+                  for (index = _j = 0, _len1 = _ref1.length; _j < _len1; index = ++_j) {
+                    char = _ref1[index];
+                    if (char.name === req.data[1]) {
+                      req.session.editId = char._id;
+                      req.io.emit('edit-char', char);
+                      return;
+                    }
+                  }
+                  return req.io.emit('message', "Sorry, you can't edit character \"" + req.data[1] + "\".\n    TIP: Did you spell it correctly?\n    TIP: If your character's name has a space in it, you must enclose it in quotes.");
+                }
+              });
             }
           });
         case 'room':
@@ -121,7 +150,7 @@
             $push: {
               chars: charData._id
             }
-          }, function(userErr, userData) {
+          }).exec(function(userErr, userData) {
             if (userErr != null) {
               return req.io.emit('error', userErr);
             } else {
@@ -132,7 +161,6 @@
       });
     });
     return app.io.route('edit-char', function(req) {
-      console.log("DATA: " + JSON.stringify(req.data));
       return Char.findByIdAndUpdate(req.session.editId, {
         $set: {
           name: req.data.name,
@@ -141,10 +169,9 @@
           move: req.data.move,
           appear: req.data.appear
         }
-      }, function(err, data) {
+      }).exec(function(err, data) {
         var key, value, _ref, _results;
         if (err != null) {
-          console.log("ERROR: " + err);
           _ref = err.errors;
           _results = [];
           for (key in _ref) {
