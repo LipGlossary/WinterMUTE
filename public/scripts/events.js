@@ -50,7 +50,7 @@
     term.echo(data.message);
     term.echo("    TIP: Enter \"q\" to cancel.");
     return term.push(function(input, term) {
-      if (!data.args) {
+      if (data.args == null) {
         data.args = [];
       }
       input = $.terminal.parseArguments(input)[0];

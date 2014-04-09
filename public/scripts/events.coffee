@@ -51,9 +51,9 @@ socket.on 'prompt', (data) ->
   term.echo "    TIP: Enter \"q\" to cancel."
   term.push(
     (input, term) ->
-      if !data.args then data.args = []
+      unless data.args? then data.args = []
       input = $.terminal.parseArguments(input)[0]
-      if input != 'q'
+      if input isnt 'q'
         data.args.push input
         socket.emit data.command, data.args
       term.pop()

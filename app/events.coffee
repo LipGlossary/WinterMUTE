@@ -27,28 +27,32 @@ module.exports = (app) ->
                 req.io.emit 'edit-char', char
 
       'char' : (req) ->
-        User
-        .findById req.session.passport.user
-        .exec (err, user) ->
-          if err? then req.io.emit 'error', err
-          else if user.chars.length < 2 then req.io.emit 'message', "You don't have any characters to edit."
-          else user.populate 'chars', (err, user) ->
-            if err? then req.io.emit 'error', err
-            else if not req.data[1]?
-              charList = ""
-              for char, index in user.chars
-                if index > 0 then charList += "    " + char.name
-              req.io.emit 'prompt',
-                message : 'Which character would you like to edit?\n' + charList
-                command : 'edit'
-                args : req.data
+        unless req.data[1]?
+          User
+          .findById req.session.passport.user
+          .populate 'chars'
+          .exec (err, user) ->
+            if user.chars.length < 2
+              req.io.emit 'message', "You don't have any characters to edit."
             else
-              for char, index in user.chars
-                if char.name == req.data[1]
-                  req.session.editId = char._id
-                  req.io.emit 'edit-char', char
-                  return
+              charList = ""
+              for char, index in user.chars when index > 0
+                charList += '    ' + char.name
+              req.io.emit 'prompt',
+                message : "Which character would you like to edit?\n" + charList
+                command : 'edit'
+                args    : req.data
+        else
+          Char
+          .findOne name : req.data[1]
+          .exec (err, char) ->
+            unless char?
               req.io.emit 'message', "Sorry, you can't edit character \"#{req.data[1]}\".\n    TIP: Did you spell it correctly?\n    TIP: If your character's name has a space in it, you must enclose it in quotes."
+            else unless char.owner.toString() is req.session.passport.user
+              req.io.emit 'message', "Sorry, you don't have permission to edit \"#{req.data[1]}\"."
+            else
+              req.session.editId = char._id
+              req.io.emit 'edit-char', char
 
       'room' : (req) -> req.io.emit 'message', "Sorry, I can't edit rooms at this time."
       
@@ -81,6 +85,7 @@ module.exports = (app) ->
 
   app.io.route 'create-char', (req) ->
     newChar = 
+      owner :  req.session.passport.user
       name : req.data.name
       list : req.data.list
       look : req.data.look
