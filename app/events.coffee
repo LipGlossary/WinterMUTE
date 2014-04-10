@@ -122,3 +122,14 @@ module.exports = (app) ->
         for key of err.errors when not charErrors[key]?(err, req)
           req.io.emit 'error', err
       else req.io.emit 'message', "The character \"#{req.data.name}\" was saved!"
+
+  app.io.route 'ooc', (req) ->
+    User
+    .findById req.session.passport.user
+    .populate 'chars'
+    .exec (err, user) ->
+      if err? req.io.emit
+      else
+        app.io.broadcast 'ooc',
+          user    : user.chars[0].name
+          message : req.data

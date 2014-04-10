@@ -79,4 +79,8 @@
     return $('#edit-char').css("visibility", "visible");
   });
 
+  socket.on('ooc', function(data) {
+    return term.echo("[OOC] " + data.user + ": " + data.message);
+  });
+
 }).call(this);

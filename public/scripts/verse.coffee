@@ -13,10 +13,14 @@ jQuery ($) ->
     'edit'   : (args) -> socket.emit 'edit', args
     'create' : (args) -> socket.emit 'create', args
 
+  channels =
+    'ooc' : (msg) -> socket.emit 'ooc', msg
+
   handler = (command, term) ->
     parse = $.terminal.parseCommand command
     unless commands[parse.name]?(parse.args)
-      term.echo "I'm sorry, I didn't understand the command \"#{parse.name}\"."
+      unless channels[parse.name]?(parse.rest)
+        term.echo "I'm sorry, I didn't understand the command \"#{parse.name}\"."
     return
 
 # PLUGIN OPTIONS
