@@ -168,7 +168,7 @@
         }
       });
     });
-    return app.io.route('edit-char', function(req) {
+    app.io.route('edit-char', function(req) {
       return Char.findByIdAndUpdate(req.session.editId, {
         $set: {
           name: req.data.name,
@@ -192,6 +192,18 @@
           return _results;
         } else {
           return req.io.emit('message', "The character \"" + req.data.name + "\" was saved!");
+        }
+      });
+    });
+    return app.io.route('ooc', function(req) {
+      return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
+        if (typeof err === "function" ? err(req.io.emit) : void 0) {
+
+        } else {
+          return app.io.broadcast('ooc', {
+            user: user.chars[0].name,
+            message: req.data
+          });
         }
       });
     });

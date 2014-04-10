@@ -73,3 +73,6 @@ socket.on 'edit-char', (data) ->
   $('#edit-char-form input[name="move"]').val(data.move)
   $('#edit-char-form input[name="appear"]').val(data.appear)
   $('#edit-char').css "visibility", "visible"
+
+socket.on 'ooc', (data) ->
+  term.echo "[OOC] " + data.user + ": " + data.message
