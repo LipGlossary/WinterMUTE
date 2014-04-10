@@ -79,4 +79,4 @@ socket.on 'edit-char', (data) ->
   $('#char').css "visibility", "visible"
 
 socket.on 'ooc', (data) ->
-  term.echo "[OOC] " + data.user + ": " + data.message
+  term.echo "[[;yellow;black](OOC) " + data.user + ": " + data.message + "]"

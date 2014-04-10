@@ -29,7 +29,7 @@
         }
       }
     };
-    greeting = '[[b;red;white]Welcome to WinterMUTE, a multi-user text empire.]\nFor a list of commands, type "help".\nAs the we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.\nVersion control is currently OFF. Edits cannot be undone.\n';
+    greeting = '[[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]\nFor a list of commands, type "help".\nAs the we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.\nVersion control is currently OFF. Edits cannot be undone.\n';
     options = {
       history: true,
       prompt: '> ',
@@ -44,7 +44,7 @@
         return false;
       },
       historySize: false,
-      height: $(window).height(),
+      height: $('body').height() * 0.9,
       checkArity: false
     };
     term = $('#console').terminal(handler, options);

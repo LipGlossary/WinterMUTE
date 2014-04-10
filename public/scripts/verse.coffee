@@ -25,7 +25,7 @@ jQuery ($) ->
 
 # PLUGIN OPTIONS
   greeting = '''
-[[b;red;white]Welcome to WinterMUTE, a multi-user text empire.]
+[[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]
 For a list of commands, type "help".
 As the we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.
 Version control is currently OFF. Edits cannot be undone.
@@ -43,7 +43,7 @@ Version control is currently OFF. Edits cannot be undone.
     enabled: true
     onBlur: (terminal) -> return false
     historySize: false
-    height: $(window).height()
+    height: $('body').height() * 0.9
     checkArity: false
 
 # INSTANTIATION

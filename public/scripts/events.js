@@ -84,7 +84,7 @@
   });
 
   socket.on('ooc', function(data) {
-    return term.echo("[OOC] " + data.user + ": " + data.message);
+    return term.echo("[[;yellow;black](OOC) " + data.user + ": " + data.message + "]");
   });
 
 }).call(this);
