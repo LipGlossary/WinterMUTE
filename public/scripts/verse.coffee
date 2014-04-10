@@ -25,7 +25,7 @@ jQuery ($) ->
 
 # PLUGIN OPTIONS
   greeting = '''
-[[b;red;white]Welcome to WinterMUTE, a multi-user text empire.]
+[[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]
 For a list of commands, type "help".
 As the we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.
 Version control is currently OFF. Edits cannot be undone.
@@ -43,7 +43,7 @@ Version control is currently OFF. Edits cannot be undone.
     enabled: true
     onBlur: (terminal) -> return false
     historySize: false
-    height: $(window).height()
+    height: $('body').height() * 0.9
     checkArity: false
 
 # INSTANTIATION
@@ -61,7 +61,9 @@ Version control is currently OFF. Edits cannot be undone.
     $('#create-btn-cancel').css "visibility", "hidden"
     $('#create-btn').css "visibility", "visible"
     term.pause()
-    $('#create-char').css "visibility", "visible"
+    $('#char-form button[data-cmd="edit"]').css "visibility", "hidden"
+    $('#char-form button[data-cmd="create"]').css "visibility", "visible"
+    $('#char').css "visibility", "visible"
   $('#create-btn-cancel').click ->
     $('#create-char-btn').css "visibility", "hidden"
     $('#create-btn-cancel').css "visibility", "hidden"

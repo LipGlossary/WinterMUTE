@@ -24,12 +24,12 @@
 .terminal {
     padding: 10px;
     position: relative;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 .cmd {
     padding: 0;
     margin: 0;
-    height: 1.4em;
+    height: 14px;
     /*margin-top: 3px; */
 }
 .cmd .cursor.blink {
@@ -40,47 +40,47 @@
 }
 @keyframes blink {
   0%, 100% {
-        background-color: #fff;
-        color: #000;
+        background-color: #000;
+        color: #aaa;
   }
   50% {
-        background-color: #000;
-        color: #fff;
+        background-color: #bbb; /* not #aaa because it's seem there is Google Chrome bug */
+        color: #000;
   }
 }
 @-webkit-keyframes blink {
   0%, 100% {
-        background-color: #fff;
-        color: #000;
+        background-color: #000;
+        color: #aaa;
   }
   50% {
-        background-color: #000;
-        color: #fff;
+        background-color: #bbb;
+        color: #000;
   }
 }
 @-ms-keyframes blink {
   0%, 100% {
-        background-color: #fff;
-        color: #000;
+        background-color: #000;
+        color: #aaa;
   }
   50% {
-        background-color: #000;
-        color: #fff;
+        background-color: #bbb;
+        color: #000;
   }
 }
 @-moz-keyframes blink {
   0%, 100% {
-        background-color: #fff;
-        color: #000;
+        background-color: #000;
+        color: #aaa;
   }
   50% {
-        background-color: #000;
-        color: #fff;
+        background-color: #bbb;
+        color: #000;
   }
 }
 .terminal .terminal-output div div, .cmd .prompt {
     display: block;
-    line-height: 1.4em;
+    line-height: 16px;
     height: auto;
 }
 .cmd .prompt {
@@ -88,14 +88,14 @@
 }
 .terminal, .cmd {
     font-family: Monaco, monospace;
-    color: #000;
-    background-color: #fff;
-    font-size: 10pt;
-    line-height: 1.4em;
+    color: #aaa;
+    background-color: #000;
+    font-size: 12px;
+    line-height: 16px;
 }
 .terminal-output > div {
     /*padding-top: 3px;*/
-    min-height: 1.4em;
+    min-height: 16px;
 }
 .terminal .terminal-output div span {
     display: inline-block;
