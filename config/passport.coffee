@@ -37,17 +37,11 @@ module.exports = (passport) ->
           # if there are any errors, return the error
           if err then return done err
           # if no user is found, return the message
-          if !user then return done(
-            null
-            false
+          if !user then return done null, false,
             req.flash 'loginMessage', 'No user found.'
-          )
           if !user.validPassword password
-            return done(
-              null
-              false
-              req.flash('loginMessage', 'Oops! Wrong password.')
-            )
+            return done null, false,
+              req.flash 'loginMessage', 'Oops! Wrong password.'
           # all is well, return user
           else return done null, user
 

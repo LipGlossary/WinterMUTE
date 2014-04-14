@@ -7,7 +7,9 @@ module.exports = (app, passport) ->
 
   # LIVE MUTE ====================================
   app.get '/verse', isLoggedIn, (req, res) ->
-    res.render 'verse.ejs', user: req.user
+    req.user.populate 'chars', (err, user) ->
+      if err? then console.log "ERROR! " + err
+      else res.render 'verse.ejs', user: user
 
   # LOGOUT =======================================
   app.get '/logout', (req, res) ->
@@ -57,12 +59,6 @@ module.exports = (app, passport) ->
     failureRedirect : '/change'
       # redirect back to the signup page if there is an error
     failureFlash : true # allow flash messages
-
-  # REALTIME ROUTES ============================================================
-
-  app.post '/create-char', (req) ->
-    console.log "SESSION: " + JSON.stringify(req.session)
-    console.log "BODY: " + JSON.stringify(req.body)
 
 # ==============================================================================
 # MIDDLEWARE ===================================================================

@@ -24,8 +24,17 @@
     <div id="console" class="col-xs-12 col-sm-10">
     </div>
     <div id="palette" class="col-xs-12 col-sm-2">
-      <p>Hello <%= user.email %></p>
-      <p>chars.length: <%= user.chars.length %></p>
+      <div id="info">
+        <p><b>Hello, <%= user.chars[0].name %></b></p>
+        <% if (user.chars.length > 1) { %>
+          <p>Characters:</p>
+          <ul>
+          <% for(var i = 1; i < user.chars.length; i++) { %>
+            <li><%= user.chars[i].name %></li>
+          <% } %>
+          </ul>
+        <% } %>
+      </div>
       <p><button id="help" class="btn btn-info">help</button></p>
       <p>
         <button id="create-btn" class="btn btn-info">create</button>
