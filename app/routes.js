@@ -7,8 +7,14 @@
       return res.render('index.ejs');
     });
     app.get('/verse', isLoggedIn, function(req, res) {
-      return res.render('verse.ejs', {
-        user: req.user
+      return req.user.populate('chars', function(err, user) {
+        if (err != null) {
+          return console.log("ERROR! " + err);
+        } else {
+          return res.render('verse.ejs', {
+            user: user
+          });
+        }
       });
     });
     app.get('/logout', function(req, res) {
@@ -40,15 +46,11 @@
         message: req.flash('loginMessage')
       });
     });
-    app.post('/change', passport.authenticate('signup', {
+    return app.post('/change', passport.authenticate('signup', {
       successRedirect: '/verse',
       failureRedirect: '/change',
       failureFlash: true
     }));
-    return app.post('/create-char', function(req) {
-      console.log("SESSION: " + JSON.stringify(req.session));
-      return console.log("BODY: " + JSON.stringify(req.body));
-    });
   };
 
   isLoggedIn = function(req, res, next) {
