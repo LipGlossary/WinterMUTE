@@ -58,6 +58,34 @@ module.exports = (app) ->
       
       'object' : (req) -> req.io.emit 'message', "Sorry, I can't edit objects at this time."
 
+  app.io.route 'help', (req) ->
+    req.io.emit 'message', '''
+
+COMMAND     ARGUMENTS         DESCRIPTION
+
+help        N/A               List of commands
+
+create                        Create anything
+            char              Create a new character
+            room              Create a new room
+            object            Create a new object
+
+edit                          Edit anything
+            self              Edit your out-of-character self
+            char              Edit a characters
+            char, <name>      Edit the character <name>
+            room              Edit a room
+
+[[;blue;black]Coming soon...]
+
+COMMAND     ARGUMENTS         DESCRIPTION
+
+edit        room, <code>      Edit room <code>
+            object            Edit an object
+            object, <code>    Edit object <code>
+
+'''
+
   app.io.route 'create', (req) ->
     unless commands['create'][req.data[0]]?(req)
       if not req.data[0]?

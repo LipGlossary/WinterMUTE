@@ -3,10 +3,9 @@
   jQuery(function($) {
     var channels, commands, greeting, handler, options, socket, term;
     socket = io.connect();
-    $.getScript('./scripts/commands.js');
     commands = {
       'help': function() {
-        return help(term);
+        return socket.emit('help');
       },
       'edit': function(args) {
         return socket.emit('edit', args);

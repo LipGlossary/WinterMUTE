@@ -4,12 +4,10 @@ jQuery ($) ->
 
 # TERMINAL SETUP ===============================================================
 
-  $.getScript './scripts/commands.js'
-
 # COMMAND HANLDER
 
   commands =
-    'help'   :        -> help term
+    'help'   :        -> socket.emit 'help'
     'edit'   : (args) -> socket.emit 'edit', args
     'create' : (args) -> socket.emit 'create', args
 

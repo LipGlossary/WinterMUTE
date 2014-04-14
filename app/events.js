@@ -85,6 +85,9 @@
         }
       }
     };
+    app.io.route('help', function(req) {
+      return req.io.emit('message', '\nCOMMAND     ARGUMENTS         DESCRIPTION\n\nhelp        N/A               List of commands\n\ncreate                        Create anything\n            char              Create a new character\n            room              Create a new room\n            object            Create a new object\n\nedit                          Edit anything\n            self              Edit your out-of-character self\n            char              Edit a characters\n            char, <name>      Edit the character <name>\n            room              Edit a room\n\n[[;blue;black]Coming soon...]\n\nCOMMAND     ARGUMENTS         DESCRIPTION\n\nedit        room, <code>      Edit room <code>\n            object            Edit an object\n            object, <code>    Edit object <code>\n');
+    });
     app.io.route('create', function(req) {
       var _base, _name;
       if (!(typeof (_base = commands['create'])[_name = req.data[0]] === "function" ? _base[_name](req) : void 0)) {
