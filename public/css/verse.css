@@ -5,6 +5,8 @@ html {
 
 body {
   height: 100%;
+  background-image: url('../img/skulls.png');
+  background-repeat: repeat;
 }
 
 div#console {
