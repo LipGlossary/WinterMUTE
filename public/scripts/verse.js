@@ -3,10 +3,9 @@
   jQuery(function($) {
     var channels, commands, greeting, handler, options, socket, term;
     socket = io.connect();
-    $.getScript('./scripts/commands.js');
     commands = {
       'help': function() {
-        return help(term);
+        return socket.emit('help');
       },
       'edit': function(args) {
         return socket.emit('edit', args);
@@ -29,7 +28,7 @@
         }
       }
     };
-    greeting = '[[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]\nFor a list of commands, type "help".\nAs the we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.\nVersion control is currently OFF. Edits cannot be undone.\n';
+    greeting = '[[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]\nFor a list of commands, type "help".\nAs we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.\nVersion control is currently OFF. Edits cannot be undone.\n';
     options = {
       history: true,
       prompt: '> ',
@@ -48,36 +47,14 @@
       checkArity: false
     };
     term = $('#console').terminal(handler, options);
-    $('#help').click(function() {
-      return help(term);
-    });
-    $('#create-btn').click(function() {
-      $('#create-btn').css("visibility", "hidden");
-      $('#create-char-btn').css("visibility", "visible");
-      return $('#create-btn-cancel').css("visibility", "visible");
-    });
-    $('#create-char-btn').click(function() {
-      $('#create-char-btn').css("visibility", "hidden");
-      $('#create-btn-cancel').css("visibility", "hidden");
-      $('#create-btn').css("visibility", "visible");
-      term.pause();
-      $('#char-form button[data-cmd="edit"]').css("visibility", "hidden");
-      $('#char-form button[data-cmd="create"]').css("visibility", "visible");
-      return $('#char').css("visibility", "visible");
-    });
-    $('#create-btn-cancel').click(function() {
-      $('#create-char-btn').css("visibility", "hidden");
-      $('#create-btn-cancel').css("visibility", "hidden");
-      return $('#create-btn').css("visibility", "visible");
-    });
+    $.getScript('./scripts/palette.js');
     $.getScript('./scripts/events.js');
     $.getScript('./scripts/forms.js');
-    $(window).resize(function() {
+    return $(window).resize(function() {
       return $('#console').css({
-        "height": $(window).height() + "px"
+        "height": $('body').height() * 0.9 + "px"
       });
     });
-    return $.terminal.active().echo('Hello from outside!');
   });
 
 }).call(this);

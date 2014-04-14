@@ -5,6 +5,8 @@ html {
 
 body {
   height: 100%;
+  background-image: url('../img/skulls.png');
+  background-repeat: repeat;
 }
 
 div#console {
@@ -23,7 +25,7 @@ div#palette {
 
 button#create-char-btn,
 button#create-btn-cancel {
-	visibility: hidden;
+	display: none;
 }
 
 div#char {
@@ -36,7 +38,7 @@ div#char {
 	background-color: rgba(255, 255, 255, 0.8);
 	overflow: scroll;
 	z-index: 10;
-	visibility: hidden;
+	display: none;
 }
 
 div.inner-form {

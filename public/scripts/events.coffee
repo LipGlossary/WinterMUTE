@@ -63,9 +63,9 @@ socket.on 'prompt', (data) ->
 
 socket.on 'create-char', ->
   term.pause()
-  $('#char-form button[data-cmd="edit"]').css "visibility", "hidden"
-  $('#char-form button[data-cmd="create"]').css "visibility", "visible"
-  $('#char').css "visibility", "visible"
+  $('#char-form button[data-cmd="edit"]').hide()
+  $('#char-form button[data-cmd="create"]').show()
+  $('#char').show()
 
 socket.on 'edit-char', (data) ->
   term.pause()
@@ -74,9 +74,9 @@ socket.on 'edit-char', (data) ->
   $('#char-form textarea[name="look"]').val(data.look)
   $('#char-form input[name="move"]').val(data.move)
   $('#char-form input[name="appear"]').val(data.appear)
-  $('#char-form button[data-cmd="create"]').css "visibility", "hidden"
-  $('#char-form button[data-cmd="edit"]').css "visibility", "visible"
-  $('#char').css "visibility", "visible"
+  $('#char-form button[data-cmd="create"]').hide()
+  $('#char-form button[data-cmd="edit"]').show()
+  $('#char').show()
 
 socket.on 'ooc', (data) ->
   term.echo "[[;yellow;black](OOC) " + data.user + ": " + data.message + "]"
