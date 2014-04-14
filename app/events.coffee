@@ -61,7 +61,7 @@ module.exports = (app) ->
   app.io.route 'help', (req) ->
     req.io.emit 'message', '''
 
-COMMAND     ARGUMENTS         DESCRIPTION
+[[;white;black]COMMAND     ARGUMENTS         DESCRIPTION]
 
 help        N/A               List of commands
 
@@ -78,7 +78,7 @@ edit                          Edit anything
 
 [[;blue;black]Coming soon...]
 
-COMMAND     ARGUMENTS         DESCRIPTION
+[[;white;black]COMMAND     ARGUMENTS         DESCRIPTION]
 
 edit        room, <code>      Edit room <code>
             object            Edit an object

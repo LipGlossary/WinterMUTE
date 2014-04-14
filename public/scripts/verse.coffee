@@ -25,7 +25,7 @@ jQuery ($) ->
   greeting = '''
 [[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]
 For a list of commands, type "help".
-As the we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.
+As we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.
 Version control is currently OFF. Edits cannot be undone.
 
 '''
@@ -47,34 +47,17 @@ Version control is currently OFF. Edits cannot be undone.
 # INSTANTIATION
   term = $('#console').terminal handler, options
 
-# COMMAND PALETTE ==============================================================
+# ENVIRONMENT ==================================================================
 
-  $('#help').click -> help term
-  $('#create-btn').click ->
-    $('#create-btn').css "visibility", "hidden"
-    $('#create-char-btn').css "visibility", "visible"
-    $('#create-btn-cancel').css "visibility", "visible"
-  $('#create-char-btn').click ->
-    $('#create-char-btn').css "visibility", "hidden"
-    $('#create-btn-cancel').css "visibility", "hidden"
-    $('#create-btn').css "visibility", "visible"
-    term.pause()
-    $('#char-form button[data-cmd="edit"]').css "visibility", "hidden"
-    $('#char-form button[data-cmd="create"]').css "visibility", "visible"
-    $('#char').css "visibility", "visible"
-  $('#create-btn-cancel').click ->
-    $('#create-char-btn').css "visibility", "hidden"
-    $('#create-btn-cancel').css "visibility", "hidden"
-    $('#create-btn').css "visibility", "visible"
+  # COMMAND PALETTE
+  $.getScript './scripts/palette.js'
 
-# EVENTS =======================================================================
-
+  # EVENTS
   $.getScript './scripts/events.js'
 
-# FORMS ========================================================================
-
+  # FORMS
   $.getScript './scripts/forms.js'
 
 # MISCELLANEOUS ================================================================
-  $(window).resize -> $('#console').css "height": $(window).height() + "px"
-  $.terminal.active().echo 'Hello from outside!'
+  $(window).resize ->
+    $('#console').css "height": $('body').height() * 0.9 + "px"
