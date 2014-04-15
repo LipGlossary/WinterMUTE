@@ -21,7 +21,15 @@
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Char'
       }
-    ]
+    ],
+    currentChar: {
+      type: Number,
+      required: true
+    },
+    visible: {
+      type: Boolean,
+      required: true
+    }
   });
 
   User.methods.generateHash = function(password) {
