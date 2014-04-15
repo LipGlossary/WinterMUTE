@@ -43,16 +43,19 @@
         return false;
       },
       historySize: false,
-      height: $('body').height() * 0.9,
+      height: $('body').height(),
       checkArity: false
     };
     term = $('#console').terminal(handler, options);
     $.getScript('./scripts/palette.js');
     $.getScript('./scripts/events.js');
     $.getScript('./scripts/forms.js');
+    $('#console').css({
+      "height": $('body').height() + "px"
+    });
     return $(window).resize(function() {
       return $('#console').css({
-        "height": $('body').height() * 0.9 + "px"
+        "height": $('body').height() + "px"
       });
     });
   });

@@ -40,6 +40,36 @@
 
   socket.emit('ready');
 
+  socket.on('update', function(user) {
+    var char, index, _i, _len, _ref;
+    $('#info').empty();
+    $('#info').append('<p>Hello, </p>');
+    if (user.currentChar === 0) {
+      $('#info p').append('<b>' + user.chars[0].name + '</b>.');
+    } else {
+      $('#info p').append(user.chars[0].name + '.');
+    }
+    if (user.chars.length > 1) {
+      $('#info').append('<p>Characters:</p>', '<ul></ul>');
+      _ref = user.chars;
+      for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+        char = _ref[index];
+        if (index !== 0) {
+          if (index === user.currentChar) {
+            $('#info ul').append('<li><b>' + char.name + '</b></li>');
+          } else {
+            $('#info ul').append('<li>' + char.name + '</li>');
+          }
+        }
+      }
+    }
+    if (user.visible) {
+      return $('#info').append('<p>You are currently visible.</p>');
+    } else {
+      return $('#info').append('<p>You are currently invisible.</p>');
+    }
+  });
+
   socket.on('tutorial', function() {
     term.pause();
     return $('#tutorial').show();

@@ -38,6 +38,23 @@ socket.on 'error', ->
 
 socket.emit 'ready'
 
+socket.on 'update', (user) ->
+  $('#info').empty()
+  $('#info').append '<p>Hello, </p>'
+  if user.currentChar == 0
+    $('#info p').append '<b>' + user.chars[0].name + '</b>.'
+  else $('#info p').append user.chars[0].name + '.'
+  if user.chars.length > 1
+    $('#info').append '<p>Characters:</p>', '<ul></ul>'
+    for char, index in user.chars when index isnt 0
+      if index == user.currentChar
+        $('#info ul').append '<li><b>' + char.name + '</b></li>'
+      else $('#info ul').append '<li>' + char.name + '</li>'
+  if user.visible
+    $('#info').append '<p>You are currently visible.</p>'
+  else $('#info').append '<p>You are currently invisible.</p>'
+
+
 socket.on 'tutorial', ->
   term.pause()
   $('#tutorial').show()
