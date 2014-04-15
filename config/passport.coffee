@@ -43,10 +43,7 @@ module.exports = (passport) ->
             return done null, false,
               req.flash 'loginMessage', 'Oops! Wrong password.'
           # all is well, return user
-          else
-            user.populate 'chars', (poperr, popuser) ->
-              if poperr then return done poperr
-              return done null, popuser
+          else return done null, user
 
   # ============================================================================
   # LOCAL SIGNUP ===============================================================

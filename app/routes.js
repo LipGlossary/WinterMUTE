@@ -7,15 +7,7 @@
       return res.render('index.ejs');
     });
     app.get('/verse', isLoggedIn, function(req, res) {
-      return req.user.populate('chars', function(err, user) {
-        if (err != null) {
-          return console.log("ERROR! " + err);
-        } else {
-          return res.render('verse.ejs', {
-            user: user
-          });
-        }
-      });
+      return res.render('verse.ejs');
     });
     app.get('/logout', function(req, res) {
       req.logout();

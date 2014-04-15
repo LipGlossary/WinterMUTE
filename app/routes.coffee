@@ -7,9 +7,7 @@ module.exports = (app, passport) ->
 
   # LIVE MUTE ====================================
   app.get '/verse', isLoggedIn, (req, res) ->
-    req.user.populate 'chars', (err, user) ->
-      if err? then console.log "ERROR! " + err
-      else res.render 'verse.ejs', user: user
+    res.render 'verse.ejs'
 
   # LOGOUT =======================================
   app.get '/logout', (req, res) ->
