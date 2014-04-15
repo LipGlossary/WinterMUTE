@@ -10,6 +10,13 @@
 
   module.exports = function(app) {
     var charErrors, commands;
+    app.io.route('ready', function(req) {
+      return User.findById(req.session.passport.user).exec(function(err, user) {
+        if (user.chars[0] == null) {
+          return req.io.emit('tutorial');
+        }
+      });
+    });
     commands = {
       'create': {
         'char': function(req) {

@@ -31,17 +31,16 @@ socket.on 'connect_failed', ->
 socket.on 'reconnect_failed', ->
   console.log 'reconnect_failed'
 
-# "error" is emitted when an error occurs and it cannot be handled by the other event types.
+
+
 socket.on 'error', ->
   console.log 'error'
 
-# # "message" is emitted when a message sent with socket.send is received. message is the sent message, and callback is an optional acknowledgement function.
-# socket.on 'message', (message, callback) ->
-#   console.log 'message: ' + message
+socket.emit 'ready'
 
-# "anything" can be any event except for the reserved ones. data is data, and callback can be used to send a reply.
-socket.on 'anything', (data, callback) ->
-  console.log 'anything: ' + data
+socket.on 'tutorial', ->
+  term.pause()
+  $('#tutorial').show()
 
 socket.on 'message', (message) ->
   term.echo message

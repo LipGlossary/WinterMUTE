@@ -21,6 +21,9 @@
       req.logout();
       return res.redirect('/');
     });
+    app.get('/tutorial', function(req, res) {
+      return res.render('tutorial.ejs');
+    });
     app.get('/login', function(req, res) {
       return res.render('login.ejs', {
         message: req.flash('loginMessage')

@@ -4,6 +4,13 @@ Char = require '../app/models/char'
 
 module.exports = (app) ->
 
+  app.io.route 'ready', (req) ->
+    User
+    .findById req.session.passport.user
+    .exec (err, user) ->
+      unless user.chars[0]?
+        req.io.emit 'tutorial'
+
   commands =
     'create' :
       'char'   : (req) -> req.io.emit 'create-char'

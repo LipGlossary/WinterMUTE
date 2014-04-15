@@ -25,14 +25,20 @@
     </div>
     <div id="palette" class="col-xs-12 col-sm-2">
       <div id="info">
-        <p><b>Hello, <%= user.chars[0].name %></b></p>
-        <% if (user.chars.length > 1) { %>
-          <p>Characters:</p>
-          <ul>
-          <% for(var i = 1; i < user.chars.length; i++) { %>
-            <li><%= user.chars[i].name %></li>
+        <% if (user.chars[0]) { %>
+          <p><b>Hello, <%= user.chars[0].name %></b></p>
+          <% if (user.chars.length > 1) { %>
+            <p>Characters:</p>
+            <ul>
+            <% for(var i = 1; i < user.chars.length; i++) { %>
+              <li>
+                <% if (i == user.currentChar) %><b>
+                <%= user.chars[i].name %>
+                <% if (i == user.currentChar) %></b>
+              </li>
+            <% } %>
+            </ul>
           <% } %>
-          </ul>
         <% } %>
       </div>
       <p><button id="help" class="btn btn-info">help</button></p>
@@ -48,7 +54,7 @@
 <div id="char">
   <div class="container-fluid">
     <div class="row-fluid">
-      <div class="inner-form col-xs-12 col-sm-6 col-sm-offset-3">
+      <div class="content col-xs-12 col-sm-6 col-sm-offset-3">
         <form id="char-form">
           <h3>Create a new character</h3>
           <div class="form-group">
@@ -93,6 +99,20 @@
             <button type="button" class="btn btn-default" data-cmd="cancel">Cancel</button>
           </p>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tutorial">
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="content col-xs-12 col-sm-6 col-sm-offset-3">
+        <h2>Welcome to WinterMUTE</h2>
+        <p>To get started, you must create an out-of-character persona. This is you, the architect, although it can be as fanciful as you like.</p>
+        <p>You can change your name whenever you wish, but it's nice to the other players if you pick something and stick with it.</p>
+        <p>We encourage everyone to look over the <a href="/tutorial" target="_blank">tutorial document</a>.</p>
+        <p><button type="button" class="btn btn-primary" data-cmd="ok">OK</button></p>
       </div>
     </div>
   </div>

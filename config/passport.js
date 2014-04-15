@@ -33,7 +33,12 @@
           if (!user.validPassword(password)) {
             return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
           } else {
-            return done(null, user);
+            return user.populate('chars', function(poperr, popuser) {
+              if (poperr) {
+                return done(poperr);
+              }
+              return done(null, popuser);
+            });
           }
         });
       });
@@ -44,40 +49,29 @@
       passReqToCallback: true
     }, function(req, email, password, done) {
       return process.nextTick(function() {
-        var user;
-        if (!req.user) {
-          return User.findOne({
-            'email': email
-          }, function(err, user) {
-            var newUser;
-            if (err) {
-              return done(err);
-            }
-            if (user) {
-              return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
-            } else {
-              newUser = new User();
-              newUser.email = email;
-              newUser.password = newUser.generateHash(password);
-              return newUser.save(function(err) {
-                if (err) {
-                  throw err;
-                }
-                return done(null, newUser);
-              });
-            }
-          });
-        } else {
-          user = req.user;
-          user.email = email;
-          user.password = user.generateHash(password);
-          return user.save(function(err) {
-            if (err) {
-              throw err;
-            }
-            return done(null, user);
-          });
-        }
+        return User.findOne({
+          'email': email
+        }, function(err, user) {
+          var newUser;
+          if (err) {
+            return done(err);
+          }
+          if (user) {
+            return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
+          } else {
+            newUser = new User();
+            newUser.email = email;
+            newUser.password = newUser.generateHash(password);
+            newUser.currentChar = 0;
+            newUser.visible = false;
+            return newUser.save(function(err) {
+              if (err) {
+                throw err;
+              }
+              return done(null, newUser);
+            });
+          }
+        });
       });
     }));
   };
