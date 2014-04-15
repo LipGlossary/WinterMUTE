@@ -25,21 +25,6 @@
     </div>
     <div id="palette" class="col-xs-12 col-sm-2">
       <div id="info">
-        <% if (user.chars[0]) { %>
-          <p><b>Hello, <%= user.chars[0].name %></b></p>
-          <% if (user.chars.length > 1) { %>
-            <p>Characters:</p>
-            <ul>
-            <% for(var i = 1; i < user.chars.length; i++) { %>
-              <li>
-                <% if (i == user.currentChar) %><b>
-                <%= user.chars[i].name %>
-                <% if (i == user.currentChar) %></b>
-              </li>
-            <% } %>
-            </ul>
-          <% } %>
-        <% } %>
       </div>
       <p><button id="help" class="btn btn-info">help</button></p>
       <p>

@@ -7,9 +7,11 @@ module.exports = (app) ->
   app.io.route 'ready', (req) ->
     User
     .findById req.session.passport.user
+    .populate 'chars'
     .exec (err, user) ->
-      unless user.chars[0]?
+      if not user.chars[0]?
         req.io.emit 'tutorial'
+      else req.io.emit 'update', user
 
   commands =
     'create' :
@@ -137,9 +139,12 @@ edit        room, <code>      Edit room <code>
         .findByIdAndUpdate req.session.passport.user,
           $push :
             chars : charData._id
+        .populate 'chars'
         .exec (userErr, userData) ->
           if userErr? then req.io.emit 'error', userErr
-          else req.io.emit 'message', "The character \"#{req.data.name}\" was created!"
+          else
+            req.io.emit 'message', "The character \"#{req.data.name}\" was created!"
+            req.io.emit 'update', userData
 
   app.io.route 'edit-char', (req) ->
     Char
@@ -156,7 +161,14 @@ edit        room, <code>      Edit room <code>
           req.io.emit 'message', "A character with that name already exists."
         for key of err.errors when not charErrors[key]?(err, req)
           req.io.emit 'error', err
-      else req.io.emit 'message', "The character \"#{req.data.name}\" was saved!"
+      else
+        req.io.emit 'message', "The character \"#{req.data.name}\" was saved!"
+        User
+        .findById req.session.passport.user
+        .populate 'chars'
+        .exec (popErr, popData) ->
+          if popErr? then req.io.emit 'error', popErr
+          else req.io.emit 'update', popData
 
   app.io.route 'ooc', (req) ->
     User

@@ -41,7 +41,7 @@ Version control is currently OFF. Edits cannot be undone.
     enabled: true
     onBlur: (terminal) -> return false
     historySize: false
-    height: $('body').height() * 0.9
+    height: $('body').height()
     checkArity: false
 
 # INSTANTIATION
@@ -59,5 +59,6 @@ Version control is currently OFF. Edits cannot be undone.
   $.getScript './scripts/forms.js'
 
 # MISCELLANEOUS ================================================================
+  $('#console').css "height": $('body').height() + "px"
   $(window).resize ->
-    $('#console').css "height": $('body').height() * 0.9 + "px"
+    $('#console').css "height": $('body').height() + "px"

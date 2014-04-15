@@ -11,9 +11,11 @@
   module.exports = function(app) {
     var charErrors, commands;
     app.io.route('ready', function(req) {
-      return User.findById(req.session.passport.user).exec(function(err, user) {
+      return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
         if (user.chars[0] == null) {
           return req.io.emit('tutorial');
+        } else {
+          return req.io.emit('update', user);
         }
       });
     });
@@ -168,11 +170,12 @@
             $push: {
               chars: charData._id
             }
-          }).exec(function(userErr, userData) {
+          }).populate('chars').exec(function(userErr, userData) {
             if (userErr != null) {
               return req.io.emit('error', userErr);
             } else {
-              return req.io.emit('message', "The character \"" + req.data.name + "\" was created!");
+              req.io.emit('message', "The character \"" + req.data.name + "\" was created!");
+              return req.io.emit('update', userData);
             }
           });
         }
@@ -201,7 +204,14 @@
           }
           return _results;
         } else {
-          return req.io.emit('message', "The character \"" + req.data.name + "\" was saved!");
+          req.io.emit('message', "The character \"" + req.data.name + "\" was saved!");
+          return User.findById(req.session.passport.user).populate('chars').exec(function(popErr, popData) {
+            if (popErr != null) {
+              return req.io.emit('error', popErr);
+            } else {
+              return req.io.emit('update', popData);
+            }
+          });
         }
       });
     });

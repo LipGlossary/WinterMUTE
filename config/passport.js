@@ -33,12 +33,7 @@
           if (!user.validPassword(password)) {
             return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
           } else {
-            return user.populate('chars', function(poperr, popuser) {
-              if (poperr) {
-                return done(poperr);
-              }
-              return done(null, popuser);
-            });
+            return done(null, user);
           }
         });
       });
