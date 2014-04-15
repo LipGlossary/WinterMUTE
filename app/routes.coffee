@@ -1,7 +1,7 @@
 module.exports = (app, passport) ->
 
   # normal routes ===============================================================
-
+  
   # show the home page (will also have our login links)
   app.get '/', (req, res) -> res.render 'index.ejs'
 
@@ -15,6 +15,9 @@ module.exports = (app, passport) ->
   app.get '/logout', (req, res) ->
     req.logout()
     res.redirect '/'
+
+  # TUTORIAL PAGES ===============================
+  app.get '/tutorial', (req, res) -> res.render 'tutorial.ejs'
 
   # ============================================================================
   # AUTHENTICATE (FIRST LOGIN) =================================================

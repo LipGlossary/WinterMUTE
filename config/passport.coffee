@@ -43,7 +43,10 @@ module.exports = (passport) ->
             return done null, false,
               req.flash 'loginMessage', 'Oops! Wrong password.'
           # all is well, return user
-          else return done null, user
+          else
+            user.populate 'chars', (poperr, popuser) ->
+              if poperr then return done poperr
+              return done null, popuser
 
   # ============================================================================
   # LOCAL SIGNUP ===============================================================
@@ -59,29 +62,22 @@ module.exports = (passport) ->
     (req, email, password, done) ->
       # asynchronous
       process.nextTick ->
-          # check if the user is already logged ina
-          if !req.user
-            User.findOne { 'email' :  email }, (err, user) ->
-              # if there are any errors, return the error
-              if err then return done err
-              # check to see if theres already a user with that email
-              if (user) then return done(
-                null
-                false
-                req.flash 'signupMessage', 'That email is already taken.'
-              )
-              else
-                # create the user
-                newUser = new User();
-                newUser.email = email;
-                newUser.password = newUser.generateHash password
-                newUser.save (err) ->
-                  if err then throw err
-                  return done null, newUser
+        User.findOne { 'email' :  email }, (err, user) ->
+          # if there are any errors, return the error
+          if err then return done err
+          # check to see if theres already a user with that email
+          if (user) then return done(
+            null
+            false
+            req.flash 'signupMessage', 'That email is already taken.'
+          )
           else
-            user = req.user;
-            user.email = email;
-            user.password = user.generateHash password
-            user.save (err) ->
+            # create the user
+            newUser = new User();
+            newUser.email = email;
+            newUser.password = newUser.generateHash password
+            newUser.currentChar = 0
+            newUser.visible = false
+            newUser.save (err) ->
               if err then throw err
-              return done null, user
+              return done null, newUser

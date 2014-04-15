@@ -38,8 +38,11 @@
     return console.log('error');
   });
 
-  socket.on('anything', function(data, callback) {
-    return console.log('anything: ' + data);
+  socket.emit('ready');
+
+  socket.on('tutorial', function() {
+    term.pause();
+    return $('#tutorial').show();
   });
 
   socket.on('message', function(message) {

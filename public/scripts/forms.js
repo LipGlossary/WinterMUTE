@@ -6,6 +6,14 @@
 
   term = $.terminal.active();
 
+  $('button[data-cmd="ok"]').click(function() {
+    $('#tutorial').hide();
+    $('#char-form button[data-cmd="edit"]').hide();
+    $('#char-form button[data-cmd="cancel"]').hide();
+    $('#char-form button[data-cmd="create"]').show();
+    return $('#char').show();
+  });
+
   $('#char-form button[data-cmd="cancel"]').click(function() {
     $('#char-form button[data-cmd="create"]').hide();
     $('#char-form button[data-cmd="edit"]').hide();

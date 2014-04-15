@@ -3,16 +3,22 @@ bcrypt   = require 'bcrypt-nodejs'
 
 User = mongoose.Schema
   email :
-  	type: String
-  	required: true
-  	unique: true
+  	type     : String
+  	required : true
+  	unique   : true
   password :
-  	type: String
-  	required: true
+  	type     : String
+  	required : true
   chars : [
-  	type: mongoose.Schema.Types.ObjectId
-  	ref: 'Char'
+  	type : mongoose.Schema.Types.ObjectId
+  	ref  : 'Char'
   ]
+  currentChar :
+  	type     : Number
+  	required : true
+  visible :
+  	type     : Boolean
+  	required : true
 
 # generating a hash
 User.methods.generateHash = (password) ->
