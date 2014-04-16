@@ -27,7 +27,7 @@
     app.use(express["static"](__dirname + '/public'));
     app.set('view engine', 'ejs');
     app.use(express.session({
-      secret: 'ilovescotchscotchyscotchscotch'
+      secret: 'buymeaprettyhorse'
     }));
     app.use(passport.initialize());
     app.use(passport.session());
