@@ -64,10 +64,11 @@
       }
     }
     if (user.visible) {
-      return $('#info').append('<p>You are currently visible.</p>');
+      $('#info').append('<p>You are currently visible.</p>');
     } else {
-      return $('#info').append('<p>You are currently invisible.</p>');
+      $('#info').append('<p>You are currently invisible.</p>');
     }
+    return $('#info').append('<a href="/logout">logout</a>');
   });
 
   socket.on('tutorial', function() {
@@ -81,7 +82,7 @@
 
   socket.on('prompt', function(data) {
     term.echo(data.message);
-    term.echo("    TIP: Enter \"q\" to cancel.");
+    term.echo("    [[;gray;black]TIP: Enter \"q\" to cancel.]");
     return term.push(function(input, term) {
       if (data.args == null) {
         data.args = [];
@@ -114,6 +115,13 @@
     $('#char-form button[data-cmd="create"]').hide();
     $('#char-form button[data-cmd="edit"]').show();
     return $('#char').show();
+  });
+
+  socket.on('create-zone', function(data) {
+    term.pause();
+    $('#zone-form button[data-cmd="edit"]').hide();
+    $('#zone-form button[data-cmd="create').show();
+    return $('#zone').show();
   });
 
   socket.on('ooc', function(data) {

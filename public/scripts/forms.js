@@ -6,7 +6,7 @@
 
   term = $.terminal.active();
 
-  $('button[data-cmd="ok"]').click(function() {
+  $('#tutorial button[data-cmd="ok"]').click(function() {
     $('#tutorial').hide();
     $('#char-form button[data-cmd="edit"]').hide();
     $('#char-form button[data-cmd="cancel"]').hide();
@@ -14,10 +14,11 @@
     return $('#char').show();
   });
 
-  $('#char-form button[data-cmd="cancel"]').click(function() {
-    $('#char-form button[data-cmd="create"]').hide();
-    $('#char-form button[data-cmd="edit"]').hide();
+  $('button[data-cmd="cancel"]').click(function() {
+    $('button[data-cmd="create"]').hide();
+    $('button[data-cmd="edit"]').hide();
     $('#char').hide();
+    $('#zone').hide();
     return term.resume();
   });
 
@@ -43,6 +44,17 @@
       look: $('#char-form textarea[name="look"]').val(),
       move: $('#char-form input[name="move"]').val(),
       appear: $('#char-form input[name="appear"]').val()
+    });
+    return term.resume();
+  });
+
+  $('#zone-form button[data-cmd="create"]').click(function(event) {
+    event.preventDefault();
+    $('#zone').hide();
+    socket.emit('create-zone', {
+      name: $('#zone-form input[name="name"]').val(),
+      "private": $('#zone-form input[name="private"]:checked').val(),
+      parent: $('#zone-form input[name="super"]').val()
     });
     return term.resume();
   });

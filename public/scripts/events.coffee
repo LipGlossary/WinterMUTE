@@ -53,6 +53,7 @@ socket.on 'update', (user) ->
   if user.visible
     $('#info').append '<p>You are currently visible.</p>'
   else $('#info').append '<p>You are currently invisible.</p>'
+  $('#info').append '<a href="/logout">logout</a>'
 
 
 socket.on 'tutorial', ->
@@ -64,7 +65,7 @@ socket.on 'message', (message) ->
 
 socket.on 'prompt', (data) ->
   term.echo data.message
-  term.echo "    TIP: Enter \"q\" to cancel."
+  term.echo "    [[;gray;black]TIP: Enter \"q\" to cancel.]"
   term.push(
     (input, term) ->
       unless data.args? then data.args = []
@@ -93,6 +94,12 @@ socket.on 'edit-char', (data) ->
   $('#char-form button[data-cmd="create"]').hide()
   $('#char-form button[data-cmd="edit"]').show()
   $('#char').show()
+
+socket.on 'create-zone', (data) ->
+  term.pause()
+  $('#zone-form button[data-cmd="edit"]').hide()
+  $('#zone-form button[data-cmd="create').show()
+  $('#zone').show()
 
 socket.on 'ooc', (data) ->
   term.echo "[[;yellow;black](OOC) " + data.user + ": " + data.message + "]"

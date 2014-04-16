@@ -25,10 +25,10 @@ jQuery ($) ->
 # PLUGIN OPTIONS
   greeting = '''
 [[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]
-For the detailed help pages, type "help".
+[[;white;black]For the detailed help pages, type "help".
 For a list of commands, type "command".
 As we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.
-Version control is currently OFF. Edits cannot be undone.
+Version control is currently OFF. Edits cannot be undone.]
 
 '''
   options =

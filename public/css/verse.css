@@ -36,8 +36,9 @@ button#create-btn-cancel {
 	display: none;
 }
 
+div#tutorial,
 div#char,
-div#tutorial {
+div#zone {
 	position: absolute;
 	top: 0px;
 	left: 0px;
