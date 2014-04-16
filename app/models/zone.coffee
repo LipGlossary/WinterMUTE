@@ -6,15 +6,24 @@ Zone = mongoose.Schema
     ref: 'Char'
     required: true
   name:
-  	type: String
-  	unique: true
-  	required: true
+  	type     : String
+  	unique   : true
+  	required : true
+  code :
+    type : String
+  parent : [
+    type : mongoose.Schema.Types.ObjectId
+    ref  : 'Zone'
+  ]
+  private :
+    type : Boolean
+    required : true
   zones: [
-    type: mongoose.Schema.types.ObjectId
+    type: mongoose.Schema.Types.ObjectId
     ref: 'Zone'
   ]
   rooms: [
-    type: mongooseSchema.types.ObjectId
+    type: mongoose.Schema.Types.ObjectId
     ref: 'Room'
   ]
 

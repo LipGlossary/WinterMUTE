@@ -1,8 +1,21 @@
 mongoose = require 'mongoose'
 User = require '../app/models/user'
 Char = require '../app/models/char'
+Zone = require '../app/models/zone'
 
 module.exports = (app) ->
+
+  generateCode = (req, obj) ->
+    code = ('000000' + ( Math.random() * 0xFFFFFF << 0 ).toString( 16 )).slice( -6 )
+    Zone
+    .findOne code : code
+    .exec (err, data) ->
+      if err? then req.io.emit 'error', err
+      else if data? then generateCode req, obj
+      else
+        obj.code = code
+        obj.save (saveErr, saveData) ->
+          if saveErr? then req.io.emit 'error', saveErr
 
   app.io.route 'ready', (req) ->
     User
@@ -18,6 +31,7 @@ module.exports = (app) ->
       'char'   : (req) -> req.io.emit 'create-char'
       'room'   : (req) -> req.io.emit 'message', "I'm sorry, I cannot create rooms at this time."
       'object' : (req) -> req.io.emit 'message', "I'm sorry, I cannot creat objects at this time."
+      'zone'   : (req) -> req.io.emit 'create-zone'
     
     'edit' :
 
@@ -92,7 +106,7 @@ edit                          Edit anything
     unless commands['create'][req.data[0]]?(req)
       if not req.data[0]?
         req.io.emit 'prompt',
-        message : "What would you like to create?\n    char    room    object"
+        message : "What would you like to create?\n    char    room    object    zone"
         command : 'create'
         args : req.data
       else req.io.emit 'message', "I cannot edit \"#{req.data[0]}\"."
@@ -162,6 +176,40 @@ edit                          Edit anything
         .exec (popErr, popData) ->
           if popErr? then req.io.emit 'error', popErr
           else req.io.emit 'update', popData
+
+  app.io.route 'create-zone', (req) ->
+    newZone = new Zone
+    newZone.owner = req.session.passport.user
+    newZone.name = req.data.name
+    console.log req.data.private
+    if req.data.private == 'private'
+      newZone.private = true
+    else newZone.private = false
+    Zone
+    .findOne code : req.data.parent
+    .exec (err, parent) ->
+      if err? then req.io.emit 'error', err
+      else if not parent?
+        if req.data.parent != ''
+          req.io.emit 'message', "That super-zone does not exist."
+          return
+      else newZone.parent = parent._id
+      newZone.save (saveErr, saveZone) ->
+        if saveErr?
+          if saveErr.errors?
+            req.io.emit 'message', "The zone must have a name."
+          else if saveErr.code?
+            req.io.emit 'message', "A zone with that name already exists."
+          else req.io.emit 'error', saveErr
+        else
+          generateCode req, saveZone
+          parent?.update(
+            $push :
+              zones : saveZone._id
+            (parentErr, parentData) ->
+              if parentErr? then req.io.emit 'error', parentErr
+          )
+          req.io.emit 'message', "The zone #{req.data.name} was created!"
 
   app.io.route 'ooc', (req) ->
     User

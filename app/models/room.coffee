@@ -12,6 +12,9 @@ Room = mongoose.Schema
   look: 
   	type: String
   	required: true
+  private :
+    type     : Boolean
+    required : true
   exits:
     north:
       type: mongoose.Schema.Types.ObjectId

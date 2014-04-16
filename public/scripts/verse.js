@@ -31,7 +31,7 @@
         }
       }
     };
-    greeting = '[[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]\nFor the detailed help pages, type "help".\nFor a list of commands, type "command".\nAs we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.\nVersion control is currently OFF. Edits cannot be undone.\n';
+    greeting = '[[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]\n[[;white;black]For the detailed help pages, type "help".\nFor a list of commands, type "command".\nAs we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.\nVersion control is currently OFF. Edits cannot be undone.]\n';
     options = {
       history: true,
       prompt: '> ',
