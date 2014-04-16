@@ -67,12 +67,13 @@ module.exports = (app) ->
       
       'object' : (req) -> req.io.emit 'message', "Sorry, I can't edit objects at this time."
 
-  app.io.route 'help', (req) ->
+  app.io.route 'command', (req) ->
     req.io.emit 'message', '''
 
 [[;white;black]COMMAND     ARGUMENTS         DESCRIPTION]
 
-help        N/A               List of commands
+commands                      List of commands
+help                          Launch tutorial page
 
 create                        Create anything
             char              Create a new character
@@ -84,14 +85,6 @@ edit                          Edit anything
             char              Edit a characters
             char, <name>      Edit the character <name>
             room              Edit a room
-
-[[;blue;black]Coming soon...]
-
-[[;white;black]COMMAND     ARGUMENTS         DESCRIPTION]
-
-edit        room, <code>      Edit room <code>
-            object            Edit an object
-            object, <code>    Edit object <code>
 
 '''
 

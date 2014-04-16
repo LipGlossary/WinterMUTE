@@ -7,9 +7,10 @@ jQuery ($) ->
 # COMMAND HANLDER
 
   commands =
-    'help'   :        -> socket.emit 'help'
-    'edit'   : (args) -> socket.emit 'edit', args
-    'create' : (args) -> socket.emit 'create', args
+    'help'    :        -> window.open('/tutorial')
+    'command' :        -> socket.emit 'command'
+    'edit'    : (args) -> socket.emit 'edit', args
+    'create'  : (args) -> socket.emit 'create', args
 
   channels =
     'ooc' : (msg) -> socket.emit 'ooc', msg
@@ -24,7 +25,8 @@ jQuery ($) ->
 # PLUGIN OPTIONS
   greeting = '''
 [[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]
-For a list of commands, type "help".
+For the detailed help pages, type "help".
+For a list of commands, type "command".
 As we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.
 Version control is currently OFF. Edits cannot be undone.
 
