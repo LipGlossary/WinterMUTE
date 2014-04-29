@@ -59,6 +59,7 @@
             newUser.password = newUser.generateHash(password);
             newUser.currentChar = 0;
             newUser.visible = false;
+            newUser.room = '000001';
             return newUser.save(function(err) {
               if (err) {
                 throw err;

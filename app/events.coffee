@@ -6,6 +6,7 @@ Room = require '../app/models/room'
 
 module.exports = (app) ->
 
+  # TO DO: change this to accept a callback
   generateCode = (req, obj) ->
     code = ('000000' + ( Math.random() * 0xFFFFFF << 0 ).toString( 16 )).slice( -6 )
     Zone
@@ -142,62 +143,70 @@ edit                          Edit anything
           args : req.data
       else req.io.emit 'message', "I cannot edit \"#{req.data[0]}\"."
 
-  charErrors =
-    'name'   : (err, req) -> req.io.emit 'message', "The character must have a name."
-    'list'   : (err, req) -> req.io.emit 'message', "The character must have a short description (\"list\" command)."
-    'look'   : (err, req) -> req.io.emit 'message', "The character must have a long description (\"look\" command)."
-    'move'   : (err, req) -> req.io.emit 'message', "The character must have a movement description."
-    'appear' : (err, req) -> req.io.emit 'message', "The character must have a [dis]appearance description."
+  validateChar = (char, req) ->
+    flag = true
+    if not char.name? or char.name == ''
+      req.io.emit 'message', "The character must have a name."
+      flag = false
+    if not char.list? or char.list == ''
+      req.io.emit 'message', "The character must have a short description (\"list\" command)."
+      flag = false
+    if not char.look? or char.look == ''
+      req.io.emit 'message', "The character must have a long description (\"look\" command)."
+      flag = false
+    if not char.move? or char.move == ''
+      req.io.emit 'message', "The character must have a movement description."
+      flag = false
+    if not char.appear? or char.appear == ''
+      req.io.emit 'message', "The character must have a [dis]appearance description."
+      flag = false
+    return flag
 
-  app.io.route 'create-char', (req) ->
-    newChar = 
-      owner :  req.session.passport.user
-      name : req.data.name
-      list : req.data.list
-      look : req.data.look
-      move : req.data.move
-      appear : req.data.appear
-    Char.create newChar, (charErr, charData) ->
-      if charErr?
-        if charErr.code == 11000
-          req.io.emit 'message', "A character with that name already exists."
-        for key of charErr.errors when not charErrors[key]?(charErr, req)
-          req.io.emit 'error', charErr
+  createChar = (char, req, done) ->
+    Char.create char, (charErr, charData) ->
+      if charErr? then done charErr, null
       else
         User
-        .findByIdAndUpdate req.session.passport.user,
+        .findByIdAndUpdate char.owner,
           $push :
             chars : charData._id
         .populate 'chars'
         .exec (userErr, userData) ->
-          if userErr? then req.io.emit 'error', userErr
+          if userErr? then done userErr, null
           else
-            req.io.emit 'message', "The character \"#{req.data.name}\" was created!"
-            req.io.emit 'update', userData
+            if req? then req.io.emit 'update', userData
+            done null, charData
+
+  app.io.route 'create-char', (req) ->
+    newChar = req.data
+    newChar.owner = req.session.passport.user
+    if validateChar newChar, req
+      createChar newChar, req, (err, data) ->
+        if err?
+          if err.code == 11000
+            req.io.emit 'message', "A character with the name \"#{req.data.name}\" already exists."
+          else
+            req.io.emit 'error', err
+            console.log err
+        else req.io.emit 'message', "The character \"#{req.data.name}\" was created!"
 
   app.io.route 'edit-char', (req) ->
-    Char
-    .findByIdAndUpdate req.session.editId,
-      $set :
-        name : req.data.name
-        list : req.data.list
-        look : req.data.look
-        move : req.data.move
-        appear : req.data.appear
-    .exec (err, data) ->
-      if err?
-        if err.code == 11000
-          req.io.emit 'message', "A character with that name already exists."
-        for key of err.errors when not charErrors[key]?(err, req)
-          req.io.emit 'error', err
-      else
-        req.io.emit 'message', "The character \"#{req.data.name}\" was saved!"
-        User
-        .findById req.session.passport.user
-        .populate 'chars'
-        .exec (popErr, popData) ->
-          if popErr? then req.io.emit 'error', popErr
-          else req.io.emit 'update', popData
+    if validateChar req.data, req
+      Char
+      .findByIdAndUpdate req.session.editId, $set : req.data
+      .exec (err, data) ->
+        if err?
+          if err.code == 11000
+            req.io.emit 'message', "A character with that name already exists."
+          else req.io.emit 'error', err
+        else
+          req.io.emit 'message', "The character \"#{req.data.name}\" was saved!"
+          User
+          .findById req.session.passport.user
+          .populate 'chars'
+          .exec (popErr, popData) ->
+            if popErr? then req.io.emit 'error', popErr
+            else req.io.emit 'update', popData
 
   app.io.route 'create-zone', (req) ->
     newZone = new Zone

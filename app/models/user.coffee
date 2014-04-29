@@ -19,6 +19,9 @@ User = mongoose.Schema
   visible :
   	type     : Boolean
   	required : true
+  room :
+    type     : String
+    required : true
 
 # generating a hash
 User.methods.generateHash = (password) ->

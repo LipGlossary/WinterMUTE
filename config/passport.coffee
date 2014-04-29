@@ -75,6 +75,7 @@ module.exports = (passport) ->
             newUser.password = newUser.generateHash password
             newUser.currentChar = 0
             newUser.visible = false
+            newUser.room = '000001'
             newUser.save (err) ->
               if err then throw err
               return done null, newUser
