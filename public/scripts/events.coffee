@@ -101,5 +101,25 @@ socket.on 'create-zone', (data) ->
   $('#zone-form button[data-cmd="create').show()
   $('#zone').show()
 
+socket.on 'edit-zone', (data) ->
+  term.pause()
+  $('#zone-form input[name="name"]').val(data.name)
+  if data.private == true
+    $('#zone-form input[value="private"]').attr('checked', 'checked')
+  else $('#zone-form input[value="public"]').attr('checked', 'checked')
+  $('#zone-form input[name="super"]').val(data.parent?.code ? '')
+  $('#zone-form button[data-cmd="create"]').hide()
+  $('#zone-form button[data-cmd="edit"]').show()
+  $('#zone-form div.list').empty()
+  if data.zones.length > 0
+    $('#zone-form div.list').append '<p>Sub-zones:</p><ul class="zones"></ul>'
+    for zone in data.zones
+      $('#zone-form div.list ul.zones').append '<li>' + zone.name + ' (' + zone.code + ')</li>'
+  if data.rooms.length > 0
+    $('#zone-form div.list').append '<p>Rooms:</p><ul class="rooms"></ul>'
+    for room in data.rooms
+      $('#zone-form div.list ul.rooms').append '<li>' + room.name + ' (' + room.code + ')</li>'
+  $('#zone').show()
+
 socket.on 'ooc', (data) ->
   term.echo "[[;yellow;black](OOC) " + data.user + ": " + data.message + "]"

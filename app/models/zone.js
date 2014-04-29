@@ -18,12 +18,10 @@
     code: {
       type: String
     },
-    parent: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Zone'
-      }
-    ],
+    parent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Zone'
+    },
     "private": {
       type: Boolean,
       required: true
@@ -41,6 +39,27 @@
       }
     ]
   });
+
+  Zone.methods.addZone = function(id) {
+    return this.update({
+      $push: {
+        zones: id
+      }
+    }, function(err, data) {
+      if (err != null) {
+        return req.io.emit('error', err);
+      }
+    });
+  };
+
+  Zone.methods.removeZone = function(id) {
+    this.zones.pull(id);
+    return this.save(function(err, data) {
+      if (err != null) {
+        return req.io.emit('error', err);
+      }
+    });
+  };
 
   module.exports = mongoose.model('Zone', Zone);
 
