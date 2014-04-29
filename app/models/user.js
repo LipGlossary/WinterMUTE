@@ -29,6 +29,10 @@
     visible: {
       type: Boolean,
       required: true
+    },
+    room: {
+      type: String,
+      required: true
     }
   });
 

@@ -13,7 +13,7 @@
   Room = require('../app/models/room');
 
   module.exports = function(app) {
-    var charErrors, commands, generateCode;
+    var commands, createChar, generateCode, validateChar;
     generateCode = function(req, obj) {
       var code;
       code = ('000000' + (Math.random() * 0xFFFFFF << 0).toString(16)).slice(-6);
@@ -179,95 +179,95 @@
         }
       }
     });
-    charErrors = {
-      'name': function(err, req) {
-        return req.io.emit('message', "The character must have a name.");
-      },
-      'list': function(err, req) {
-        return req.io.emit('message', "The character must have a short description (\"list\" command).");
-      },
-      'look': function(err, req) {
-        return req.io.emit('message', "The character must have a long description (\"look\" command).");
-      },
-      'move': function(err, req) {
-        return req.io.emit('message', "The character must have a movement description.");
-      },
-      'appear': function(err, req) {
-        return req.io.emit('message', "The character must have a [dis]appearance description.");
+    validateChar = function(char, req) {
+      var flag;
+      flag = true;
+      if ((char.name == null) || char.name === '') {
+        req.io.emit('message', "The character must have a name.");
+        flag = false;
       }
+      if ((char.list == null) || char.list === '') {
+        req.io.emit('message', "The character must have a short description (\"list\" command).");
+        flag = false;
+      }
+      if ((char.look == null) || char.look === '') {
+        req.io.emit('message', "The character must have a long description (\"look\" command).");
+        flag = false;
+      }
+      if ((char.move == null) || char.move === '') {
+        req.io.emit('message', "The character must have a movement description.");
+        flag = false;
+      }
+      if ((char.appear == null) || char.appear === '') {
+        req.io.emit('message', "The character must have a [dis]appearance description.");
+        flag = false;
+      }
+      return flag;
     };
-    app.io.route('create-char', function(req) {
-      var newChar;
-      newChar = {
-        owner: req.session.passport.user,
-        name: req.data.name,
-        list: req.data.list,
-        look: req.data.look,
-        move: req.data.move,
-        appear: req.data.appear
-      };
-      return Char.create(newChar, function(charErr, charData) {
-        var key, _results;
+    createChar = function(char, req, done) {
+      return Char.create(char, function(charErr, charData) {
         if (charErr != null) {
-          if (charErr.code === 11000) {
-            req.io.emit('message', "A character with that name already exists.");
-          }
-          _results = [];
-          for (key in charErr.errors) {
-            if (!(typeof charErrors[key] === "function" ? charErrors[key](charErr, req) : void 0)) {
-              _results.push(req.io.emit('error', charErr));
-            }
-          }
-          return _results;
+          return done(charErr, null);
         } else {
-          return User.findByIdAndUpdate(req.session.passport.user, {
+          return User.findByIdAndUpdate(char.owner, {
             $push: {
               chars: charData._id
             }
           }).populate('chars').exec(function(userErr, userData) {
             if (userErr != null) {
-              return req.io.emit('error', userErr);
+              return done(userErr, null);
             } else {
-              req.io.emit('message', "The character \"" + req.data.name + "\" was created!");
-              return req.io.emit('update', userData);
+              if (req != null) {
+                req.io.emit('update', userData);
+              }
+              return done(null, charData);
             }
           });
         }
       });
+    };
+    app.io.route('create-char', function(req) {
+      var newChar;
+      newChar = req.data;
+      newChar.owner = req.session.passport.user;
+      if (validateChar(newChar, req)) {
+        return createChar(newChar, req, function(err, data) {
+          if (err != null) {
+            if (err.code === 11000) {
+              return req.io.emit('message', "A character with the name \"" + req.data.name + "\" already exists.");
+            } else {
+              req.io.emit('error', err);
+              return console.log(err);
+            }
+          } else {
+            return req.io.emit('message', "The character \"" + req.data.name + "\" was created!");
+          }
+        });
+      }
     });
     app.io.route('edit-char', function(req) {
-      return Char.findByIdAndUpdate(req.session.editId, {
-        $set: {
-          name: req.data.name,
-          list: req.data.list,
-          look: req.data.look,
-          move: req.data.move,
-          appear: req.data.appear
-        }
-      }).exec(function(err, data) {
-        var key, _results;
-        if (err != null) {
-          if (err.code === 11000) {
-            req.io.emit('message', "A character with that name already exists.");
-          }
-          _results = [];
-          for (key in err.errors) {
-            if (!(typeof charErrors[key] === "function" ? charErrors[key](err, req) : void 0)) {
-              _results.push(req.io.emit('error', err));
-            }
-          }
-          return _results;
-        } else {
-          req.io.emit('message', "The character \"" + req.data.name + "\" was saved!");
-          return User.findById(req.session.passport.user).populate('chars').exec(function(popErr, popData) {
-            if (popErr != null) {
-              return req.io.emit('error', popErr);
+      if (validateChar(req.data, req)) {
+        return Char.findByIdAndUpdate(req.session.editId, {
+          $set: req.data
+        }).exec(function(err, data) {
+          if (err != null) {
+            if (err.code === 11000) {
+              return req.io.emit('message', "A character with that name already exists.");
             } else {
-              return req.io.emit('update', popData);
+              return req.io.emit('error', err);
             }
-          });
-        }
-      });
+          } else {
+            req.io.emit('message', "The character \"" + req.data.name + "\" was saved!");
+            return User.findById(req.session.passport.user).populate('chars').exec(function(popErr, popData) {
+              if (popErr != null) {
+                return req.io.emit('error', popErr);
+              } else {
+                return req.io.emit('update', popData);
+              }
+            });
+          }
+        });
+      }
     });
     app.io.route('create-zone', function(req) {
       var newZone;

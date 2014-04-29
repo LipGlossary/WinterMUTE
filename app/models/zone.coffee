@@ -10,7 +10,9 @@ Zone = mongoose.Schema
   	unique   : true
   	required : true
   code :
-    type : String
+    type     : String
+    required : true
+    unique   : true
   parent :
     type : mongoose.Schema.Types.ObjectId
     ref  : 'Zone'
