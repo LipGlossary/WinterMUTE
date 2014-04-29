@@ -124,6 +124,38 @@
     return $('#zone').show();
   });
 
+  socket.on('edit-zone', function(data) {
+    var room, zone, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3;
+    term.pause();
+    $('#zone-form input[name="name"]').val(data.name);
+    if (data["private"] === true) {
+      $('#zone-form input[value="private"]').attr('checked', 'checked');
+    } else {
+      $('#zone-form input[value="public"]').attr('checked', 'checked');
+    }
+    $('#zone-form input[name="super"]').val((_ref = (_ref1 = data.parent) != null ? _ref1.code : void 0) != null ? _ref : '');
+    $('#zone-form button[data-cmd="create"]').hide();
+    $('#zone-form button[data-cmd="edit"]').show();
+    $('#zone-form div.list').empty();
+    if (data.zones.length > 0) {
+      $('#zone-form div.list').append('<p>Sub-zones:</p><ul class="zones"></ul>');
+      _ref2 = data.zones;
+      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+        zone = _ref2[_i];
+        $('#zone-form div.list ul.zones').append('<li>' + zone.name + ' (' + zone.code + ')</li>');
+      }
+    }
+    if (data.rooms.length > 0) {
+      $('#zone-form div.list').append('<p>Rooms:</p><ul class="rooms"></ul>');
+      _ref3 = data.rooms;
+      for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
+        room = _ref3[_j];
+        $('#zone-form div.list ul.rooms').append('<li>' + room.name + ' (' + room.code + ')</li>');
+      }
+    }
+    return $('#zone').show();
+  });
+
   socket.on('ooc', function(data) {
     return term.echo("[[;yellow;black](OOC) " + data.user + ": " + data.message + "]");
   });

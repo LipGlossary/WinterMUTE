@@ -2,6 +2,7 @@ mongoose = require 'mongoose'
 User = require '../app/models/user'
 Char = require '../app/models/char'
 Zone = require '../app/models/zone'
+Room = require '../app/models/room'
 
 module.exports = (app) ->
 
@@ -16,15 +17,6 @@ module.exports = (app) ->
         obj.code = code
         obj.save (saveErr, saveData) ->
           if saveErr? then req.io.emit 'error', saveErr
-
-  app.io.route 'ready', (req) ->
-    User
-    .findById req.session.passport.user
-    .populate 'chars'
-    .exec (err, user) ->
-      if not user.chars[0]?
-        req.io.emit 'tutorial'
-      else req.io.emit 'update', user
 
   commands =
     'create' :
@@ -69,7 +61,8 @@ module.exports = (app) ->
           Char
           .findOne name : req.data[1]
           .exec (err, char) ->
-            unless char?
+            if err? then req.io.emit 'error', err
+            else unless char?
               req.io.emit 'message', "Sorry, you can't edit character \"#{req.data[1]}\".\n    TIP: Did you spell it correctly?\n    TIP: If your character's name has a space in it, you must enclose it in quotes."
             else unless char.owner.toString() is req.session.passport.user
               req.io.emit 'message', "Sorry, you don't have permission to edit \"#{req.data[1]}\"."
@@ -80,6 +73,35 @@ module.exports = (app) ->
       'room' : (req) -> req.io.emit 'message', "Sorry, I can't edit rooms at this time."
       
       'object' : (req) -> req.io.emit 'message', "Sorry, I can't edit objects at this time."
+
+      'zone' : (req) ->
+        unless req.data[1]?
+          req.io.emit 'prompt',
+            message : "Which zone would you like to edit?"
+            command : 'edit'
+            args    : req.data
+        else
+          Zone
+          .findOne code : req.data[1]
+          .populate 'parent zones rooms'
+          .exec (err, zone) ->
+            if err? then req.io.emit 'error', err
+            else unless zone? then req.io.emit 'message', "Sorry, you cannot edit zone #{req.data[1]}."
+            else unless zone.owner.toString() is req.session.passport.user
+              req.io.emit 'message', "Sorry, you don't have permission to edit zone #{req.data[1]}."
+            else
+              req.session.editId = zone._id
+              console.log zone
+              req.io.emit 'edit-zone', zone
+
+  app.io.route 'ready', (req) ->
+    User
+    .findById req.session.passport.user
+    .populate 'chars'
+    .exec (err, user) ->
+      if not user.chars[0]?
+        req.io.emit 'tutorial'
+      else req.io.emit 'update', user
 
   app.io.route 'command', (req) ->
     req.io.emit 'message', '''
@@ -181,9 +203,7 @@ edit                          Edit anything
     newZone = new Zone
     newZone.owner = req.session.passport.user
     newZone.name = req.data.name
-    console.log req.data.private
-    if req.data.private == 'private'
-      newZone.private = true
+    if req.data.private is 'private' then newZone.private = true
     else newZone.private = false
     Zone
     .findOne code : req.data.parent
@@ -203,13 +223,41 @@ edit                          Edit anything
           else req.io.emit 'error', saveErr
         else
           generateCode req, saveZone
-          parent?.update(
-            $push :
-              zones : saveZone._id
-            (parentErr, parentData) ->
-              if parentErr? then req.io.emit 'error', parentErr
-          )
+          parent?.addZone saveZone._id
           req.io.emit 'message', "The zone #{req.data.name} was created!"
+
+  app.io.route 'edit-zone', (req) ->
+    req.io.emit 'message', "I'm sorry, I cannot edit zones at this time."
+    # Zone
+    # .findById req.session.editId
+    # .populate 'parent' # this is a problem if there is no parent
+    # .exec (err, zone) ->
+    #   if err? then req.io.emit 'error', err
+    #   else
+    #     oldParent = zone.parent
+    #     Zone
+    #     .findOne code : req.data.parent
+    #     .exec (newParentErr, newParent) ->
+    #       if newParentErr? then req.io.emit 'error', newParentErr
+    #       else if not newParent? and req.io.parent?
+    #         req.io.emit 'message', "The parent zone #{req.data.parent} does not exist."
+    #       else
+    #         zone.name = req.data.name
+    #         if req.data.private == 'private' then zone.private = true
+    #         else zone.private = false
+    #         zone.parent = newParent?._id ? undefined
+    #         zone.save (updateErr, updateZone) ->
+    #           if updateErr?
+    #             if updateErr.code == 11001
+    #               req.io.emit 'message', "A zone by that name already exists."
+    #             else
+    #               req.io.emit 'error', updateErr
+    #               console.log updateErr
+    #           else
+    #             if oldParent._id ? oldParent != newParent._id
+    #               newParent?.addZone zone._id
+    #               oldParent?.removeZone zone._id
+    #             req.io.emit 'message', "The zone \"#{req.data.name}\" was saved."
 
   app.io.route 'ooc', (req) ->
     User

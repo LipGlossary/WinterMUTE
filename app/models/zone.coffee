@@ -11,10 +11,9 @@ Zone = mongoose.Schema
   	required : true
   code :
     type : String
-  parent : [
+  parent :
     type : mongoose.Schema.Types.ObjectId
     ref  : 'Zone'
-  ]
   private :
     type : Boolean
     required : true
@@ -26,5 +25,17 @@ Zone = mongoose.Schema
     type: mongoose.Schema.Types.ObjectId
     ref: 'Room'
   ]
+
+Zone.methods.addZone = (id) ->
+  @update
+    $push :
+      zones : id
+    (err, data) ->
+      if err? then req.io.emit 'error', err
+
+Zone.methods.removeZone = (id) ->
+  @zones.pull id
+  @save (err, data) ->
+    if err? then req.io.emit 'error', err
 
 module.exports = mongoose.model 'Zone', Zone
