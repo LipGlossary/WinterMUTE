@@ -16,7 +16,9 @@
       required: true
     },
     code: {
-      type: String
+      type: String,
+      required: true,
+      unique: true
     },
     parent: {
       type: mongoose.Schema.Types.ObjectId,
@@ -40,24 +42,20 @@
     ]
   });
 
-  Zone.methods.addZone = function(id) {
+  Zone.methods.addZone = function(id, done) {
     return this.update({
       $push: {
         zones: id
       }
     }, function(err, data) {
-      if (err != null) {
-        return req.io.emit('error', err);
-      }
+      return done(err, data);
     });
   };
 
-  Zone.methods.removeZone = function(id) {
+  Zone.methods.removeZone = function(id, done) {
     this.zones.pull(id);
     return this.save(function(err, data) {
-      if (err != null) {
-        return req.io.emit('error', err);
-      }
+      return done(err, data);
     });
   };
 
