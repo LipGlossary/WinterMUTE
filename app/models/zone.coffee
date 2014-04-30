@@ -29,10 +29,8 @@ Zone = mongoose.Schema
   ]
 
 Zone.methods.addZone = (id, done) ->
-  @update
-    $push :
-      zones : id
-    (err, data) -> done err, data
+  @zones.push id
+  @save (err, data) -> done err, data
 
 Zone.methods.removeZone = (id, done) ->
   @zones.pull id

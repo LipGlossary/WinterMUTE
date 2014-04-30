@@ -22,6 +22,7 @@ User = mongoose.Schema
   room :
     type     : String
     required : true
+    default  : '000001'
 
 # generating a hash
 User.methods.generateHash = (password) ->
@@ -30,5 +31,13 @@ User.methods.generateHash = (password) ->
 # checking if password is valid
 User.methods.validPassword = (password) ->
   return bcrypt.compareSync password, @password
+
+User.methods.addChar = (id, done) ->
+  @chars.push id
+  @save (err, data) -> done err, data
+
+User.methods.removeChar = (id, done) ->
+  @chars.pull id
+  @save (err, data) -> done err, data
 
 module.exports = mongoose.model 'User', User

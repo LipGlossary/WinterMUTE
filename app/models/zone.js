@@ -43,11 +43,8 @@
   });
 
   Zone.methods.addZone = function(id, done) {
-    return this.update({
-      $push: {
-        zones: id
-      }
-    }, function(err, data) {
+    this.zones.push(id);
+    return this.save(function(err, data) {
       return done(err, data);
     });
   };

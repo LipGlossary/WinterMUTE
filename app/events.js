@@ -204,18 +204,20 @@
         if (charErr != null) {
           return done(charErr, null);
         } else {
-          return User.findByIdAndUpdate(char.owner, {
-            $push: {
-              chars: charData._id
-            }
-          }).populate('chars').exec(function(userErr, userData) {
+          return User.findById(charData.owner, function(userErr, userData) {
             if (userErr != null) {
               return done(userErr, null);
             } else {
-              if (req != null) {
-                req.io.emit('update', userData);
-              }
-              return done(null, charData);
+              return userData.addChar(charData._id, function(addErr, addData) {
+                if (addErr != null) {
+                  return done(addErr, null);
+                } else {
+                  return addData.populate('chars', function(popErr, popData) {
+                    req.io.emit('update', popData);
+                    return done(null, charData);
+                  });
+                }
+              });
             }
           });
         }
@@ -231,8 +233,7 @@
             if (err.code === 11000) {
               return req.io.emit('message', "A character with the name \"" + req.data.name + "\" already exists.");
             } else {
-              req.io.emit('error', err);
-              return console.log(err);
+              return req.io.emit('error', err);
             }
           } else {
             return req.io.emit('message', "The character \"" + req.data.name + "\" was created!");

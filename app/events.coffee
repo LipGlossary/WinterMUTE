@@ -161,16 +161,12 @@ edit                          Edit anything
   createChar = (char, req, done) ->
     Char.create char, (charErr, charData) ->
       if charErr? then done charErr, null
-      else
-        User
-        .findByIdAndUpdate char.owner,
-          $push :
-            chars : charData._id
-        .populate 'chars'
-        .exec (userErr, userData) ->
-          if userErr? then done userErr, null
-          else
-            if req? then req.io.emit 'update', userData
+      else User.findById charData.owner, (userErr, userData) ->
+        if userErr? then done userErr, null
+        else userData.addChar charData._id, (addErr, addData) ->
+          if addErr? then done addErr, null
+          else addData.populate 'chars', (popErr, popData) ->
+            req.io.emit 'update', popData
             done null, charData
 
   app.io.route 'create-char', (req) ->
@@ -183,7 +179,6 @@ edit                          Edit anything
             req.io.emit 'message', "A character with the name \"#{req.data.name}\" already exists."
           else
             req.io.emit 'error', err
-            console.log err
         else req.io.emit 'message', "The character \"#{req.data.name}\" was created!"
 
   app.io.route 'edit-char', (req) ->

@@ -32,7 +32,8 @@
     },
     room: {
       type: String,
-      required: true
+      required: true,
+      "default": '000001'
     }
   });
 
@@ -42,6 +43,20 @@
 
   User.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.password);
+  };
+
+  User.methods.addChar = function(id, done) {
+    this.chars.push(id);
+    return this.save(function(err, data) {
+      return done(err, data);
+    });
+  };
+
+  User.methods.removeChar = function(id, done) {
+    this.chars.pull(id);
+    return this.save(function(err, data) {
+      return done(err, data);
+    });
   };
 
   module.exports = mongoose.model('User', User);
