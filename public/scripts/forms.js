@@ -52,7 +52,7 @@
     var zone;
     zone = {
       name: $('#zone-form input[name="name"]').val(),
-      "private": $('#zone-form input[name="private"]:checked').val(),
+      "private": $('#zone-form input[name="private"]:checked').val() === 'private',
       parent: $('#zone-form input[name="super"]').val()
     };
     return zone;

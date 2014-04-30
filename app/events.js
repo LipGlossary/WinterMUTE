@@ -13,24 +13,19 @@
   Room = require('../app/models/room');
 
   module.exports = function(app) {
-    var commands, createChar, generateCode, validateChar;
-    generateCode = function(req, obj) {
+    var commands, createChar, createZone, generateCode, validateChar;
+    generateCode = function(done) {
       var code;
       code = ('000000' + (Math.random() * 0xFFFFFF << 0).toString(16)).slice(-6);
       return Zone.findOne({
         code: code
       }).exec(function(err, data) {
         if (err != null) {
-          return req.io.emit('error', err);
+          return console.log(err);
         } else if (data != null) {
-          return generateCode(req, obj);
+          return generateCode(done);
         } else {
-          obj.code = code;
-          return obj.save(function(saveErr, saveData) {
-            if (saveErr != null) {
-              return req.io.emit('error', saveErr);
-            }
-          });
+          return done(code);
         }
       });
     };
@@ -269,46 +264,61 @@
         });
       }
     });
+    createZone = function(zone, done) {
+      return Zone.create(zone, function(zoneErr, newZone) {
+        if (zoneErr != null) {
+          return done(zoneErr, null);
+        } else {
+          return newZone.populate('parent', function(popErr, popZone) {
+            if (popErr != null) {
+              return done(popErr, null);
+            } else {
+              return popZone.parent.addZone(newZone._id, function(addErr, addZone) {
+                if (addErr != null) {
+                  return done(addErr, null);
+                } else {
+                  return done(null, newZone);
+                }
+              });
+            }
+          });
+        }
+      });
+    };
     app.io.route('create-zone', function(req) {
       var newZone;
-      newZone = new Zone;
+      newZone = req.data;
       newZone.owner = req.session.passport.user;
-      newZone.name = req.data.name;
-      if (req.data["private"] === 'private') {
-        newZone["private"] = true;
-      } else {
-        newZone["private"] = false;
+      if ((newZone.parent == null) || newZone.parent === '') {
+        newZone.parent = '000000';
       }
       return Zone.findOne({
-        code: req.data.parent
+        code: newZone.parent
       }).exec(function(err, parent) {
         if (err != null) {
-          req.io.emit('error', err);
+          return req.io.emit('error', err);
         } else if (parent == null) {
-          if (req.data.parent !== '') {
-            req.io.emit('message', "That super-zone does not exist.");
-            return;
-          }
+          return req.io.emit('message', "That super-zone does not exist.");
         } else {
           newZone.parent = parent._id;
+          return generateCode(function(code) {
+            newZone.code = code;
+            return createZone(newZone, function(saveErr, saveZone) {
+              var _ref;
+              if (saveErr != null) {
+                if (((_ref = saveErr.errors) != null ? _ref.name : void 0) != null) {
+                  return req.io.emit('message', "The zone must have a name.");
+                } else if (saveErr.code === 11000) {
+                  return req.io.emit('message', "A zone with that name already exists.");
+                } else {
+                  return req.io.emit('error', saveErr);
+                }
+              } else {
+                return req.io.emit('message', "The zone " + req.data.name + " was created!");
+              }
+            });
+          });
         }
-        return newZone.save(function(saveErr, saveZone) {
-          if (saveErr != null) {
-            if (saveErr.errors != null) {
-              return req.io.emit('message', "The zone must have a name.");
-            } else if (saveErr.code != null) {
-              return req.io.emit('message', "A zone with that name already exists.");
-            } else {
-              return req.io.emit('error', saveErr);
-            }
-          } else {
-            generateCode(req, saveZone);
-            if (parent != null) {
-              parent.addZone(saveZone._id);
-            }
-            return req.io.emit('message', "The zone " + req.data.name + " was created!");
-          }
-        });
       });
     });
     app.io.route('edit-zone', function(req) {

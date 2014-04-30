@@ -28,16 +28,14 @@ Zone = mongoose.Schema
     ref: 'Room'
   ]
 
-Zone.methods.addZone = (id) ->
+Zone.methods.addZone = (id, done) ->
   @update
     $push :
       zones : id
-    (err, data) ->
-      if err? then req.io.emit 'error', err
+    (err, data) -> done err, data
 
-Zone.methods.removeZone = (id) ->
+Zone.methods.removeZone = (id, done) ->
   @zones.pull id
-  @save (err, data) ->
-    if err? then req.io.emit 'error', err
+  @save (err, data) -> done err, data
 
 module.exports = mongoose.model 'Zone', Zone

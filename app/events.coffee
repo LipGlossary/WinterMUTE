@@ -6,18 +6,14 @@ Room = require '../app/models/room'
 
 module.exports = (app) ->
 
-  # TO DO: change this to accept a callback
-  generateCode = (req, obj) ->
+  generateCode = (done) ->
     code = ('000000' + ( Math.random() * 0xFFFFFF << 0 ).toString( 16 )).slice( -6 )
     Zone
     .findOne code : code
     .exec (err, data) ->
-      if err? then req.io.emit 'error', err
-      else if data? then generateCode req, obj
-      else
-        obj.code = code
-        obj.save (saveErr, saveData) ->
-          if saveErr? then req.io.emit 'error', saveErr
+      if err? then console.log err
+      else if data? then generateCode done
+      else done code
 
   commands =
     'create' :
@@ -208,65 +204,43 @@ edit                          Edit anything
             if popErr? then req.io.emit 'error', popErr
             else req.io.emit 'update', popData
 
+# THIS IS GOING TO EXPLODE IF THERE ISN'T A PARENT
+# I.E. DO NOT USE THIS TO CREATE THE HIDDEN ROOT ZONE
+  createZone = (zone, done) ->
+    Zone.create zone, (zoneErr, newZone) ->
+      if zoneErr? then done zoneErr, null
+      else newZone.populate 'parent', (popErr, popZone) ->
+        if popErr? then done popErr, null
+        else  popZone.parent.addZone newZone._id, (addErr, addZone) ->
+          if addErr? then done addErr, null
+          else done null, newZone
+
   app.io.route 'create-zone', (req) ->
-    newZone = new Zone
+    newZone = req.data
     newZone.owner = req.session.passport.user
-    newZone.name = req.data.name
-    if req.data.private is 'private' then newZone.private = true
-    else newZone.private = false
+    if not newZone.parent? or newZone.parent == ''
+      newZone.parent = '000000'
     Zone
-    .findOne code : req.data.parent
+    .findOne code : newZone.parent
     .exec (err, parent) ->
       if err? then req.io.emit 'error', err
-      else if not parent?
-        if req.data.parent != ''
-          req.io.emit 'message', "That super-zone does not exist."
-          return
-      else newZone.parent = parent._id
-      newZone.save (saveErr, saveZone) ->
-        if saveErr?
-          if saveErr.errors?
-            req.io.emit 'message', "The zone must have a name."
-          else if saveErr.code?
-            req.io.emit 'message', "A zone with that name already exists."
-          else req.io.emit 'error', saveErr
-        else
-          generateCode req, saveZone
-          parent?.addZone saveZone._id
-          req.io.emit 'message', "The zone #{req.data.name} was created!"
+      else unless parent? then req.io.emit 'message', "That super-zone does not exist."
+      else
+        newZone.parent = parent._id
+        generateCode (code) ->
+          newZone.code = code
+          createZone newZone, (saveErr, saveZone) ->
+            if saveErr?
+              if saveErr.errors?.name?
+                req.io.emit 'message', "The zone must have a name."
+              else if saveErr.code == 11000
+                req.io.emit 'message', "A zone with that name already exists."
+              else req.io.emit 'error', saveErr
+            else req.io.emit 'message', "The zone #{req.data.name} was created!"
 
   app.io.route 'edit-zone', (req) ->
     req.io.emit 'message', "I'm sorry, I cannot edit zones at this time."
-    # Zone
-    # .findById req.session.editId
-    # .populate 'parent' # this is a problem if there is no parent
-    # .exec (err, zone) ->
-    #   if err? then req.io.emit 'error', err
-    #   else
-    #     oldParent = zone.parent
-    #     Zone
-    #     .findOne code : req.data.parent
-    #     .exec (newParentErr, newParent) ->
-    #       if newParentErr? then req.io.emit 'error', newParentErr
-    #       else if not newParent? and req.io.parent?
-    #         req.io.emit 'message', "The parent zone #{req.data.parent} does not exist."
-    #       else
-    #         zone.name = req.data.name
-    #         if req.data.private == 'private' then zone.private = true
-    #         else zone.private = false
-    #         zone.parent = newParent?._id ? undefined
-    #         zone.save (updateErr, updateZone) ->
-    #           if updateErr?
-    #             if updateErr.code == 11001
-    #               req.io.emit 'message', "A zone by that name already exists."
-    #             else
-    #               req.io.emit 'error', updateErr
-    #               console.log updateErr
-    #           else
-    #             if oldParent._id ? oldParent != newParent._id
-    #               newParent?.addZone zone._id
-    #               oldParent?.removeZone zone._id
-    #             req.io.emit 'message', "The zone \"#{req.data.name}\" was saved."
+    # redo this to work from the zones you are CURRENTLY IN and CAN edit
 
   app.io.route 'ooc', (req) ->
     User
