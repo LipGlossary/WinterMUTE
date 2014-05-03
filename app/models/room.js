@@ -10,6 +10,11 @@
       ref: 'Char',
       required: true
     },
+    code: {
+      type: String,
+      unique: true,
+      required: true
+    },
     name: {
       type: String,
       unique: true,

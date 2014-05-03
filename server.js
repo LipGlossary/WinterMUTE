@@ -38,6 +38,8 @@
 
   require('./app/events')(app);
 
+  require('./app/world')();
+
   app.listen(port);
 
   console.log("The magic happens on port " + port);

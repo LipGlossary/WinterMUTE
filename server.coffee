@@ -38,6 +38,9 @@ require('./app/routes')(app, passport)
 # events =======================================================================
 require('./app/events')(app)
 
+# load world ===================================================================
+require('./app/world')()
+
 # launch ======================================================================
 app.listen port
 console.log "The magic happens on port #{port}"
