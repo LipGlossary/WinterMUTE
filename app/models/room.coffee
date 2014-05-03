@@ -5,6 +5,10 @@ Room = mongoose.Schema
     type: mongoose.Schema.Types.ObjectId
     ref: 'Char'
     required: true
+  code :
+    type     : String
+    unique   : true
+    required : true
   name:
   	type: String
   	unique: true
