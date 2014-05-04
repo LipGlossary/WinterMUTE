@@ -255,30 +255,28 @@ spoof                         Act anonymously in the room
       else unless user.chars[req.data[0]]?
         req.io.emit 'message', "Character #{req.data[0]} does not exist."
         req.io.emit 'message', "[[;gray;black]    TIP: Use the character's number. Type \"char\" to get a list."
-      else
-        if user.currentChar is req.data[0]
-          req.io.emit 'message', "That character is already active."
+      else if user.currentChar is req.data[0]
+        req.io.emit 'message', "That character is already active."
+      else if user.visible is true then disappear req, (dErr) ->
+        if dErr? then req.io.emit 'error', dErr
         else
-          if user.visible is true then disappear req, (dErr) ->
-            if dErr? then req.io.emit 'error', dErr
+          user.currentChar = req.data[0]
+          user.save (err2, user2) ->
+            if err2? then req.io.emit 'error', err2
             else
-              user.currentChar = req.data[0]
-              user.save (err2, user2) ->
-                if err2? then req.io.emit 'error', err2
-                else
-                  req.io.emit 'update', user2
-                  if user.currentChar is 0
-                    req.io.emit 'message', "You are now out of character."
-                  else req.io.emit 'message', "You activated character #{user2.chars[user2.currentChar].name}."
+              req.io.emit 'update', user2
+              if user.currentChar is 0
+                req.io.emit 'message', "You are now out of character."
+              else req.io.emit 'message', "You activated character #{user2.chars[user2.currentChar].name}."
+      else
+        user.currentChar = req.data[0]
+        user.save (err2, user2) ->
+          if err2? then req.io.emit 'error', err2
           else
-            user.currentChar = req.data[0]
-            user.save (err2, user2) ->
-              if err2? then req.io.emit 'error', err2
-              else
-                req.io.emit 'update', user2
-                if user.currentChar is 0
-                  req.io.emit 'message', "You are now out of character."
-                else req.io.emit 'message', "You activated character #{user2.chars[user2.currentChar].name}."
+            req.io.emit 'update', user2
+            if user.currentChar is 0
+              req.io.emit 'message', "You are now out of character."
+            else req.io.emit 'message', "You activated character #{user2.chars[user2.currentChar].name}."
 
   app.io.route 'create', (req) ->
     unless commands['create'][req.data[0]]?(req)
@@ -401,8 +399,23 @@ spoof                         Act anonymously in the room
     .findById req.session.passport.user
     .populate 'chars'
     .exec (err, user) ->
-      if err? req.io.emit
+      if err? req.io.emit 'error', err
+      else app.io.broadcast 'ooc',
+        user    : user.chars[0].name
+        message : req.data
+
+  app.io.route 'say', (req) ->
+    User
+    .findById req.session.passport.user
+    .populate 'chars'
+    .exec (err, user) ->
+      if err? then req.io.emit 'error', err
+      else if user.visible is false
+        req.io.emit 'message', "You are invisible."
       else
-        app.io.broadcast 'ooc',
-          user    : user.chars[0].name
+        req.io.emit 'say',
+          user    : null
+          message : req.data
+        req.io.broadcast 'say',
+          user    : user.chars[user.currentChar].name
           message : req.data

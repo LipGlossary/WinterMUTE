@@ -298,30 +298,12 @@
         } else if (user.chars[req.data[0]] == null) {
           req.io.emit('message', "Character " + req.data[0] + " does not exist.");
           return req.io.emit('message', "[[;gray;black]    TIP: Use the character's number. Type \"char\" to get a list.");
-        } else {
-          if (user.currentChar === req.data[0]) {
-            return req.io.emit('message', "That character is already active.");
-          } else {
-            if (user.visible === true) {
-              return disappear(req, function(dErr) {
-                if (dErr != null) {
-                  return req.io.emit('error', dErr);
-                } else {
-                  user.currentChar = req.data[0];
-                  return user.save(function(err2, user2) {
-                    if (err2 != null) {
-                      return req.io.emit('error', err2);
-                    } else {
-                      req.io.emit('update', user2);
-                      if (user.currentChar === 0) {
-                        return req.io.emit('message', "You are now out of character.");
-                      } else {
-                        return req.io.emit('message', "You activated character " + user2.chars[user2.currentChar].name + ".");
-                      }
-                    }
-                  });
-                }
-              });
+        } else if (user.currentChar === req.data[0]) {
+          return req.io.emit('message', "That character is already active.");
+        } else if (user.visible === true) {
+          return disappear(req, function(dErr) {
+            if (dErr != null) {
+              return req.io.emit('error', dErr);
             } else {
               user.currentChar = req.data[0];
               return user.save(function(err2, user2) {
@@ -337,7 +319,21 @@
                 }
               });
             }
-          }
+          });
+        } else {
+          user.currentChar = req.data[0];
+          return user.save(function(err2, user2) {
+            if (err2 != null) {
+              return req.io.emit('error', err2);
+            } else {
+              req.io.emit('update', user2);
+              if (user.currentChar === 0) {
+                return req.io.emit('message', "You are now out of character.");
+              } else {
+                return req.io.emit('message', "You activated character " + user2.chars[user2.currentChar].name + ".");
+              }
+            }
+          });
         }
       });
     });
@@ -520,13 +516,31 @@
     app.io.route('edit-zone', function(req) {
       return req.io.emit('message', "I'm sorry, I cannot edit zones at this time.");
     });
-    return app.io.route('ooc', function(req) {
+    app.io.route('ooc', function(req) {
       return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
-        if (typeof err === "function" ? err(req.io.emit) : void 0) {
+        if (typeof err === "function" ? err(req.io.emit('error', err)) : void 0) {
 
         } else {
           return app.io.broadcast('ooc', {
             user: user.chars[0].name,
+            message: req.data
+          });
+        }
+      });
+    });
+    return app.io.route('say', function(req) {
+      return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
+        if (err != null) {
+          return req.io.emit('error', err);
+        } else if (user.visible === false) {
+          return req.io.emit('message', "You are invisible.");
+        } else {
+          req.io.emit('say', {
+            user: null,
+            message: req.data
+          });
+          return req.io.broadcast('say', {
+            user: user.chars[user.currentChar].name,
             message: req.data
           });
         }

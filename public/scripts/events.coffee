@@ -50,6 +50,7 @@ socket.on 'update', (user) ->
       if index == user.currentChar
         $('#info ul').append '<li><b>' + char.name + '</b></li>'
       else $('#info ul').append '<li>' + char.name + '</li>'
+  $('#info').append '<p style="font-size: 60%"">The bolded character is active.</p>'
   if user.visible
     $('#info').append '<p>You are currently visible.</p>'
   else $('#info').append '<p>You are currently invisible.</p>'
@@ -129,3 +130,11 @@ socket.on 'edit-zone', (data) ->
 
 socket.on 'ooc', (data) ->
   term.echo "[[;yellow;black](OOC) " + data.user + ": " + data.message + "]"
+
+socket.on 'say', (data) ->
+  msg = ''
+  if not data.user?
+    msg += 'You say, '
+  else msg += "#{data.user} says, "
+  msg += '"' + data.message + '"'
+  term.echo '[[;white;black]' + msg + ']'

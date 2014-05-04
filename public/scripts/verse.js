@@ -44,6 +44,9 @@
     channels = {
       'ooc': function(msg) {
         return socket.emit('ooc', msg);
+      },
+      'say': function(msg) {
+        return socket.emit('say', msg);
       }
     };
     handler = function(command, term) {

@@ -63,6 +63,7 @@
         }
       }
     }
+    $('#info').append('<p style="font-size: 60%"">The bolded character is active.</p>');
     if (user.visible) {
       $('#info').append('<p>You are currently visible.</p>');
     } else {
@@ -169,6 +170,18 @@
 
   socket.on('ooc', function(data) {
     return term.echo("[[;yellow;black](OOC) " + data.user + ": " + data.message + "]");
+  });
+
+  socket.on('say', function(data) {
+    var msg;
+    msg = '';
+    if (data.user == null) {
+      msg += 'You say, ';
+    } else {
+      msg += "" + data.user + " says, ";
+    }
+    msg += '"' + data.message + '"';
+    return term.echo('[[;white;black]' + msg + ']');
   });
 
 }).call(this);

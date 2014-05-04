@@ -21,7 +21,8 @@ jQuery ($) ->
     'edit'      : (args) -> socket.emit 'edit', args
 
   channels =
-    'ooc' : (msg) -> socket.emit 'ooc', msg
+    'ooc'  : (msg) -> socket.emit 'ooc', msg
+    'say'  : (msg) -> socket.emit 'say', msg
 
   handler = (command, term) ->
     parse = $.terminal.parseCommand command
