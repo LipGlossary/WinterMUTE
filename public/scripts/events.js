@@ -184,4 +184,8 @@
     return term.echo('[[;white;black]' + msg + ']');
   });
 
+  socket.on('pose', function(data) {
+    return term.echo('[[;white;black]' + data.user + ' ' + data.message + ']');
+  });
+
 }).call(this);

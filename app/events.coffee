@@ -419,3 +419,15 @@ spoof                         Act anonymously in the room
         req.io.broadcast 'say',
           user    : user.chars[user.currentChar].name
           message : req.data
+
+  app.io.route 'pose', (req) ->
+    User
+    .findById req.session.passport.user
+    .populate 'chars'
+    .exec (err, user) ->
+      if err? then req.io.emit 'error', err
+      else if user.visible is false
+        req.io.emit 'message', "You are invisible."
+      else app.io.broadcast 'pose',
+        user    : user.chars[user.currentChar].name
+        message : req.data

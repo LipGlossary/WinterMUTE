@@ -138,3 +138,6 @@ socket.on 'say', (data) ->
   else msg += "#{data.user} says, "
   msg += '"' + data.message + '"'
   term.echo '[[;white;black]' + msg + ']'
+
+socket.on 'pose', (data) ->
+  term.echo '[[;white;black]' + data.user + ' ' + data.message + ']'

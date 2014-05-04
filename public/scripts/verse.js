@@ -47,6 +47,9 @@
       },
       'say': function(msg) {
         return socket.emit('say', msg);
+      },
+      'pose': function(msg) {
+        return socket.emit('pose', msg);
       }
     };
     handler = function(command, term) {
