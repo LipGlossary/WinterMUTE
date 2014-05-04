@@ -35,14 +35,14 @@ jQuery ($) ->
 
 # PLUGIN OPTIONS
   greeting = '''
-[[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]
+[[b;red;black]Welcome to ][[b;orange;black]W][[b;yellow;black]i][[b;lime;black]n][[b;aqua;black]t][[b;dodgerblue;black]e][[b;fuchsia;black]r][[b;red;black]M][[b;orange;black]U][[b;yellow;black]T][[b;lime;black]E][[b;red;black], a multi-user text empire.]
 [[;white;black]For the detailed help pages, type "help".
 For a list of commands, type "command".
 As we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.
 Version control is currently OFF. Edits cannot be undone.]
 
-[[b;green;black]WELCOME, PROTOTYPERS!]
-[[;green;black]Thank you very much for participating in this exposition. Here are some things you should know:]
+[[b;purple;black].-/*\\-.] [[b;lime;black]WELCOME, PROTOTYPERS!] [[b;purple;black].-/*\\-.]
+[[;limegreen;black]Thank you very much for participating in this exposition. Here are some things you should know:]
 [[;white;black]1. The "help" command gives you lots of information for things that are not implemented yet. For the prototype help page, please use the command "proto".
 2. Please keep profanity to a minimum. I'm trying to get hired by the people who might be looking at you play!
 3. Please make use of all the commands available to you--don't just chat on the OOC channel all night.

@@ -137,11 +137,11 @@ socket.on 'say', (data) ->
     msg += 'You say, '
   else msg += "#{data.user} says, "
   msg += '"' + data.message + '"'
-  term.echo '[[;white;black]' + msg + ']'
+  term.echo '[[;aqua;black]' + msg + ']'
 
 socket.on 'pose', (data) ->
-  term.echo '[[;white;black]' + data.user + ' ' + data.message + ']'
+  term.echo '[[;darkturquoise;black]' + data.user + ' ' + data.message + ']'
 
 socket.on 'spoof', (data) ->
   # add user data for wizards to see?
-  term.echo '[[;white;black]' + data.message + ']'
+  term.echo '[[;darkturquoise;black]' + data.message + ']'

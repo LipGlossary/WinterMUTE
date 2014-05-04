@@ -181,15 +181,15 @@
       msg += "" + data.user + " says, ";
     }
     msg += '"' + data.message + '"';
-    return term.echo('[[;white;black]' + msg + ']');
+    return term.echo('[[;aqua;black]' + msg + ']');
   });
 
   socket.on('pose', function(data) {
-    return term.echo('[[;white;black]' + data.user + ' ' + data.message + ']');
+    return term.echo('[[;darkturquoise;black]' + data.user + ' ' + data.message + ']');
   });
 
   socket.on('spoof', function(data) {
-    return term.echo('[[;white;black]' + data.message + ']');
+    return term.echo('[[;darkturquoise;black]' + data.message + ']');
   });
 
 }).call(this);
