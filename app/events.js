@@ -13,7 +13,7 @@
   Room = require('../app/models/room');
 
   module.exports = function(app) {
-    var clients, commands, createChar, createZone, generateCode, getClients, validateChar;
+    var clients, commands, createChar, createZone, disappear, generateCode, getClients, validateChar;
     clients = [];
     generateCode = function(done) {
       var code;
@@ -245,25 +245,99 @@
         }
       });
     });
-    app.io.route('invis', function(req) {
+    disappear = function(req, done) {
       return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
         if (err != null) {
-          return req.io.emit('error', err);
+          return done(err);
         } else if (user.visible === false) {
-          return req.io.emit('message', "You are already invisible.");
+          req.io.emit('message', "You are already invisible.");
+          return done(null);
         } else {
           user.visible = false;
           return user.save(function(err2, user2) {
             var char;
             if (err != null) {
-              return req.io.emit('error', err2);
+              return done(err2);
             } else {
               req.io.emit('update', user2);
               char = user2.chars[user2.currentChar];
               req.io.emit('message', "[[;white;black]You disappear " + char.appear + ".]");
-              return req.io.broadcast('message', "[[;white;black]" + char.name + " disappears " + char.appear + ".]");
+              req.io.broadcast('message', "[[;white;black]" + char.name + " disappears " + char.appear + ".]");
+              return done(null);
             }
           });
+        }
+      });
+    };
+    app.io.route('invis', function(req) {
+      return disappear(req, function(err) {
+        if (err != null) {
+          return req.io.emit('error', err);
+        }
+      });
+    });
+    app.io.route('char', function(req) {
+      return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
+        var char, index, list, _i, _len, _ref;
+        if (req.data[0] == null) {
+          list = '    0: ' + user.chars[0].name + ' (self)';
+          _ref = user.chars;
+          for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+            char = _ref[index];
+            if (index > 0) {
+              list += '    ' + index + ': ' + char.name;
+            }
+          }
+          return req.io.emit('prompt', {
+            message: "Which character would you like to activate? (enter the number)\n" + list,
+            command: 'char',
+            args: req.data
+          });
+        } else if (req.data[0] === 'self') {
+          return req.data[0] = 0;
+        } else if (user.chars[req.data[0]] == null) {
+          req.io.emit('message', "Character " + req.data[0] + " does not exist.");
+          return req.io.emit('message', "[[;gray;black]    TIP: Use the character's number. Type \"char\" to get a list.");
+        } else {
+          if (user.currentChar === req.data[0]) {
+            return req.io.emit('message', "That character is already active.");
+          } else {
+            if (user.visible === true) {
+              return disappear(req, function(dErr) {
+                if (dErr != null) {
+                  return req.io.emit('error', dErr);
+                } else {
+                  user.currentChar = req.data[0];
+                  return user.save(function(err2, user2) {
+                    if (err2 != null) {
+                      return req.io.emit('error', err2);
+                    } else {
+                      req.io.emit('update', user2);
+                      if (user.currentChar === 0) {
+                        return req.io.emit('message', "You are now out of character.");
+                      } else {
+                        return req.io.emit('message', "You activated character " + user2.chars[user2.currentChar].name + ".");
+                      }
+                    }
+                  });
+                }
+              });
+            } else {
+              user.currentChar = req.data[0];
+              return user.save(function(err2, user2) {
+                if (err2 != null) {
+                  return req.io.emit('error', err2);
+                } else {
+                  req.io.emit('update', user2);
+                  if (user.currentChar === 0) {
+                    return req.io.emit('message', "You are now out of character.");
+                  } else {
+                    return req.io.emit('message', "You activated character " + user2.chars[user2.currentChar].name + ".");
+                  }
+                }
+              });
+            }
+          }
         }
       });
     });
@@ -284,7 +358,7 @@
     app.io.route('edit', function(req) {
       var _base, _name;
       if (!(typeof (_base = commands['edit'])[_name = req.data[0]] === "function" ? _base[_name](req) : void 0)) {
-        if (req.data[0] != null) {
+        if (req.data[0] == null) {
           return req.io.emit('prompt', {
             message: 'What would you like to edit?\n    self    char    room    object',
             command: 'edit',

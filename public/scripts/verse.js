@@ -31,6 +31,9 @@
       'invisible': function() {
         return socket.emit('invis');
       },
+      'char': function(args) {
+        return socket.emit('char', args);
+      },
       'create': function(args) {
         return socket.emit('create', args);
       },

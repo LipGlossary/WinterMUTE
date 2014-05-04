@@ -213,27 +213,76 @@ spoof                         Act anonymously in the room
             req.io.emit 'message', "[[;white;black]You appear #{char.appear}.]"
             req.io.broadcast 'message', "[[;white;black]#{char.name} appears #{char.appear}.]"
 
-  app.io.route 'invis', (req) ->
+  disappear = (req, done) ->
     User
     .findById req.session.passport.user
     .populate 'chars'
     .exec (err, user) ->
-      if err? then req.io.emit 'error', err
+      if err? then done err
       else if user.visible is false
         req.io.emit 'message', "You are already invisible."
+        done null
       else
         user.visible = false
         user.save (err2, user2) ->
-          if err? then req.io.emit 'error', err2
+          if err? then done err2
           else
             req.io.emit 'update', user2
             char = user2.chars[user2.currentChar]
             req.io.emit 'message', "[[;white;black]You disappear #{char.appear}.]"
             req.io.broadcast 'message', "[[;white;black]#{char.name} disappears #{char.appear}.]"
+            done null
+
+  app.io.route 'invis', (req) ->
+    disappear req, (err) ->
+      if err? then req.io.emit 'error', err
+
+  app.io.route 'char', (req) ->
+    User
+    .findById req.session.passport.user
+    .populate 'chars'
+    .exec (err, user) ->
+      unless req.data[0]?
+        list = '    0: ' + user.chars[0].name + ' (self)'
+        for char, index in user.chars when index > 0
+          list += '    ' + index + ': ' + char.name
+        req.io.emit 'prompt',
+          message : "Which character would you like to activate? (enter the number)\n" + list
+          command : 'char'
+          args : req.data
+      else if req.data[0] == 'self'
+        req.data[0] = 0
+      else unless user.chars[req.data[0]]?
+        req.io.emit 'message', "Character #{req.data[0]} does not exist."
+        req.io.emit 'message', "[[;gray;black]    TIP: Use the character's number. Type \"char\" to get a list."
+      else
+        if user.currentChar is req.data[0]
+          req.io.emit 'message', "That character is already active."
+        else
+          if user.visible is true then disappear req, (dErr) ->
+            if dErr? then req.io.emit 'error', dErr
+            else
+              user.currentChar = req.data[0]
+              user.save (err2, user2) ->
+                if err2? then req.io.emit 'error', err2
+                else
+                  req.io.emit 'update', user2
+                  if user.currentChar is 0
+                    req.io.emit 'message', "You are now out of character."
+                  else req.io.emit 'message', "You activated character #{user2.chars[user2.currentChar].name}."
+          else
+            user.currentChar = req.data[0]
+            user.save (err2, user2) ->
+              if err2? then req.io.emit 'error', err2
+              else
+                req.io.emit 'update', user2
+                if user.currentChar is 0
+                  req.io.emit 'message', "You are now out of character."
+                else req.io.emit 'message', "You activated character #{user2.chars[user2.currentChar].name}."
 
   app.io.route 'create', (req) ->
     unless commands['create'][req.data[0]]?(req)
-      if not req.data[0]?
+      unless req.data[0]?
         req.io.emit 'prompt',
         message : "What would you like to create?\n    char    room    object    zone"
         command : 'create'
@@ -242,7 +291,7 @@ spoof                         Act anonymously in the room
 
   app.io.route 'edit', (req) ->
     unless commands['edit'][req.data[0]]?(req)
-      if req.data[0]?
+      unless req.data[0]?
         req.io.emit 'prompt',
           message : 'What would you like to edit?\n    self    char    room    object'
           command : 'edit'
