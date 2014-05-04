@@ -8,7 +8,10 @@ jQuery ($) ->
 
   commands =
     'help'    :        -> window.open('/tutorial')
+    'proto'   :        -> window.open('/proto')
     'command' :        -> socket.emit 'command'
+    'status'  :        -> socket.emit 'status'
+    'who'     :        -> socket.emit 'who'
     'edit'    : (args) -> socket.emit 'edit', args
     'create'  : (args) -> socket.emit 'create', args
 
@@ -29,6 +32,14 @@ jQuery ($) ->
 For a list of commands, type "command".
 As we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.
 Version control is currently OFF. Edits cannot be undone.]
+
+[[b;green;black]WELCOME, PROTOTYPERS!]
+[[;green;black]Thank you very much for participating in this exposition. Here are some things you should know:]
+[[;white;black]1. The "help" command gives you lots of information for things that are not implemented yet. For the prototype help page, please use the command "proto".
+2. Please keep profanity to a minimum. I'm trying to get hired by the people who might be looking at you play!
+3. Please make use of all the commands available to you--don't just chat on the OOC channel all night.
+4. If text is falling out of the terminal, just resize the window.
+5. Have fun!]
 
 '''
   options =

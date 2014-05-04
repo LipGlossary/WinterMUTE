@@ -16,6 +16,7 @@ module.exports = (app, passport) ->
 
   # TUTORIAL PAGES ===============================
   app.get '/tutorial', (req, res) -> res.render 'tutorial.ejs'
+  app.get '/proto', (req, res) -> res.render 'proto.ejs'
 
   # ============================================================================
   # AUTHENTICATE (FIRST LOGIN) =================================================

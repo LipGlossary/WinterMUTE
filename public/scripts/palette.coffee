@@ -1,6 +1,7 @@
 # COMMAND PALETTE ==============================================================
 
 socket = io.connect()
+term = $.terminal.active()
 
 toggles =
   '#create-btn' :
@@ -31,7 +32,8 @@ toggle = (button) ->
   $(thing).hide() for thing in toggles[button].hide
   $(thing).show() for thing in toggles[button].show
 
-$('#help').click -> socket.emit 'help'
+$('#help').click -> window.open('/tutorial')
+$('#command').click -> socket.emit 'command'
 $('#create-btn').click -> toggle '#create-btn'
 $('#create-char-btn').click ->
   term.pause()

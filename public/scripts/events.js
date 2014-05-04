@@ -71,6 +71,17 @@
     return $('#info').append('<a href="/logout">logout</a>');
   });
 
+  socket.on('who', function(users) {
+    var user, _i, _len;
+    $('#who').empty();
+    $('#who').append('<p>Online now:</p><ul></ul>');
+    for (_i = 0, _len = users.length; _i < _len; _i++) {
+      user = users[_i];
+      $('#who ul').append('<li>' + user + '</li>');
+    }
+    return $('#who').append('<p style="font-size: 60%">If you do not appear in this list, please refresh your window.</p>');
+  });
+
   socket.on('tutorial', function() {
     term.pause();
     return $('#tutorial').show();

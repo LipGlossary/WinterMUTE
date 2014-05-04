@@ -6,6 +6,8 @@ Room = require '../app/models/room'
 
 module.exports = (app) ->
 
+  clients = []
+
   generateCode = (done) ->
     code = ('000000' + ( Math.random() * 0xFFFFFF << 0 ).toString( 16 )).slice( -6 )
     Zone
@@ -91,35 +93,107 @@ module.exports = (app) ->
               console.log zone
               req.io.emit 'edit-zone', zone
 
+  getClients = (done) ->
+    User
+    .find()
+    .where '_id'
+    .in clients
+    .populate 'chars'
+    .exec (err, users) ->
+      if err? then done err, null
+      else
+        list = []
+        for user in users
+          list.push( user.chars[0]?.name ? user.email )
+        done null, list
+
   app.io.route 'ready', (req) ->
+    clients.push req.session.passport.user
     User
     .findById req.session.passport.user
     .populate 'chars'
     .exec (err, user) ->
-      if not user.chars[0]?
+      if err? then req.io.emit 'error', err
+      else unless user.chars[0]?
         req.io.emit 'tutorial'
-      else req.io.emit 'update', user
+      else
+        req.io.emit 'update', user
+        getClients (err, clients) ->
+          if err? then req.io.emit 'error', err
+          else app.io.broadcast 'who', clients
+  
+  app.io.route 'disconnect', (req) ->
+    clients.splice(clients.indexOf(req.session.passport?.user), 1);
+    getClients (err, clients) ->
+      if err? then req.io.emit 'error', err
+      else app.io.broadcast 'who', clients
 
   app.io.route 'command', (req) ->
     req.io.emit 'message', '''
 
 [[;white;black]COMMAND     ARGUMENTS         DESCRIPTION]
 
-commands                      List of commands
+command                       List of commands
 help                          Launch tutorial page
+proto                         Launch prototype help page
+
+who                           Get a list of who is online
+ooc                           Post to the OOC channel
 
 create                        Create anything
             char              Create a new character
-            room              Create a new room
-            object            Create a new object
 
 edit                          Edit anything
             self              Edit your out-of-character self
-            char              Edit a characters
+            char              Edit a character
             char, <name>      Edit the character <name>
-            room              Edit a room
+
+status                        Gives your current character, location, and whether or not you are visible
+vis                           Become visible
+invis                         Become invisible
+char                          Switch characters
+            self              "Take off" your character
+            <name>            Switch to character <name>
+
+look                          Look at the room
+            self              Look at your OOC self
+            me                Look at your current character
+            <name>            Look at character <name> in the room
+list                          List the contents of the room
+
+say                           Speak to the room
+pose                          Act in the room
+spoof                         Act anonymously in the room
 
 '''
+
+  app.io.route 'status', (req) ->
+    User
+    .findById req.session.passport.user
+    .populate 'chars'
+    .exec (err, user) ->
+      if err? then emit 'error', err
+      else
+        req.io.emit 'message', "Hello, #{user.chars[0].name}."
+        if user.currentChar == 0
+          req.io.emit 'message', "You do not have a character active."
+        else req.io.emit 'message', "You are currently masquerading as #{user.chars[user.currentChar].name}."
+        if user.visible
+          req.io.emit 'message', "You are visible."
+        else req.io.emit 'message', "You are invisible."
+        Room
+        .findOne code : user.room
+        .exec (err2, room) ->
+          if err? then emit 'error', err2
+          else req.io.emit 'message', "You are in \"#{room.name}\"."
+
+  app.io.route 'who', (req) ->
+    getClients (err, users) ->
+      msg = "[[;white;black]Online now: ]"
+      for user in users
+        msg += '\n' + user
+      msg += '\n    ' + "[[;gray;black]TIP: If you don't appear in this list, please refesh your window.]"
+      req.io.emit 'message', msg
 
   app.io.route 'create', (req) ->
     unless commands['create'][req.data[0]]?(req)

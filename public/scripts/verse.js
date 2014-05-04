@@ -7,8 +7,17 @@
       'help': function() {
         return window.open('/tutorial');
       },
+      'proto': function() {
+        return window.open('/proto');
+      },
       'command': function() {
         return socket.emit('command');
+      },
+      'status': function() {
+        return socket.emit('status');
+      },
+      'who': function() {
+        return socket.emit('who');
       },
       'edit': function(args) {
         return socket.emit('edit', args);
@@ -31,7 +40,7 @@
         }
       }
     };
-    greeting = '[[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]\n[[;white;black]For the detailed help pages, type "help".\nFor a list of commands, type "command".\nAs we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.\nVersion control is currently OFF. Edits cannot be undone.]\n';
+    greeting = '[[b;red;black]Welcome to WinterMUTE, a multi-user text empire.]\n[[;white;black]For the detailed help pages, type "help".\nFor a list of commands, type "command".\nAs we are in development, the database cannot be trusted. Anything created here is drawn in the sand at low tide.\nVersion control is currently OFF. Edits cannot be undone.]\n\n[[b;green;black]WELCOME, PROTOTYPERS!]\n[[;green;black]Thank you very much for participating in this exposition. Here are some things you should know:]\n[[;white;black]1. The "help" command gives you lots of information for things that are not implemented yet. For the prototype help page, please use the command "proto".\n2. Please keep profanity to a minimum. I\'m trying to get hired by the people who might be looking at you play!\n3. Please make use of all the commands available to you--don\'t just chat on the OOC channel all night.\n4. If text is falling out of the terminal, just resize the window.\n5. Have fun!]\n';
     options = {
       history: true,
       prompt: '> ',

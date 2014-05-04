@@ -55,6 +55,12 @@ socket.on 'update', (user) ->
   else $('#info').append '<p>You are currently invisible.</p>'
   $('#info').append '<a href="/logout">logout</a>'
 
+socket.on 'who', (users) ->
+  $('#who').empty()
+  $('#who').append '<p>Online now:</p><ul></ul>'
+  for user in users
+    $('#who ul').append '<li>' + user + '</li>'
+  $('#who').append '<p style="font-size: 60%">If you do not appear in this list, please refresh your window.</p>'
 
 socket.on 'tutorial', ->
   term.pause()

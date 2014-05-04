@@ -13,7 +13,8 @@
   Room = require('../app/models/room');
 
   module.exports = function(app) {
-    var commands, createChar, createZone, generateCode, validateChar;
+    var clients, commands, createChar, createZone, generateCode, getClients, validateChar;
+    clients = [];
     generateCode = function(done) {
       var code;
       code = ('000000' + (Math.random() * 0xFFFFFF << 0).toString(16)).slice(-6);
@@ -134,17 +135,93 @@
         }
       }
     };
+    getClients = function(done) {
+      return User.find().where('_id')["in"](clients).populate('chars').exec(function(err, users) {
+        var list, user, _i, _len, _ref, _ref1;
+        if (err != null) {
+          return done(err, null);
+        } else {
+          list = [];
+          for (_i = 0, _len = users.length; _i < _len; _i++) {
+            user = users[_i];
+            list.push((_ref = (_ref1 = user.chars[0]) != null ? _ref1.name : void 0) != null ? _ref : user.email);
+          }
+          return done(null, list);
+        }
+      });
+    };
     app.io.route('ready', function(req) {
+      clients.push(req.session.passport.user);
       return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
-        if (user.chars[0] == null) {
+        if (err != null) {
+          return req.io.emit('error', err);
+        } else if (user.chars[0] == null) {
           return req.io.emit('tutorial');
         } else {
-          return req.io.emit('update', user);
+          req.io.emit('update', user);
+          return getClients(function(err, clients) {
+            if (err != null) {
+              return req.io.emit('error', err);
+            } else {
+              return app.io.broadcast('who', clients);
+            }
+          });
+        }
+      });
+    });
+    app.io.route('disconnect', function(req) {
+      var _ref;
+      clients.splice(clients.indexOf((_ref = req.session.passport) != null ? _ref.user : void 0), 1);
+      return getClients(function(err, clients) {
+        if (err != null) {
+          return req.io.emit('error', err);
+        } else {
+          return app.io.broadcast('who', clients);
         }
       });
     });
     app.io.route('command', function(req) {
-      return req.io.emit('message', '\n[[;white;black]COMMAND     ARGUMENTS         DESCRIPTION]\n\ncommands                      List of commands\nhelp                          Launch tutorial page\n\ncreate                        Create anything\n            char              Create a new character\n            room              Create a new room\n            object            Create a new object\n\nedit                          Edit anything\n            self              Edit your out-of-character self\n            char              Edit a characters\n            char, <name>      Edit the character <name>\n            room              Edit a room\n');
+      return req.io.emit('message', '\n[[;white;black]COMMAND     ARGUMENTS         DESCRIPTION]\n\ncommand                       List of commands\nhelp                          Launch tutorial page\nproto                         Launch prototype help page\n\nwho                           Get a list of who is online\nooc                           Post to the OOC channel\n\ncreate                        Create anything\n            char              Create a new character\n\nedit                          Edit anything\n            self              Edit your out-of-character self\n            char              Edit a character\n            char, <name>      Edit the character <name>\n\nstatus                        Gives your current character, location, and whether or not you are visible\nvis                           Become visible\ninvis                         Become invisible\nchar                          Switch characters\n            self              "Take off" your character\n            <name>            Switch to character <name>\n\nlook                          Look at the room\n            self              Look at your OOC self\n            me                Look at your current character\n            <name>            Look at character <name> in the room\nlist                          List the contents of the room\n\nsay                           Speak to the room\npose                          Act in the room\nspoof                         Act anonymously in the room\n');
+    });
+    app.io.route('status', function(req) {
+      return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
+        if (err != null) {
+          return emit('error', err);
+        } else {
+          req.io.emit('message', "Hello, " + user.chars[0].name + ".");
+          if (user.currentChar === 0) {
+            req.io.emit('message', "You do not have a character active.");
+          } else {
+            req.io.emit('message', "You are currently masquerading as " + user.chars[user.currentChar].name + ".");
+          }
+          if (user.visible) {
+            req.io.emit('message', "You are visible.");
+          } else {
+            req.io.emit('message', "You are invisible.");
+          }
+          return Room.findOne({
+            code: user.room
+          }).exec(function(err2, room) {
+            if (err != null) {
+              return emit('error', err2);
+            } else {
+              return req.io.emit('message', "You are in \"" + room.name + "\".");
+            }
+          });
+        }
+      });
+    });
+    app.io.route('who', function(req) {
+      return getClients(function(err, users) {
+        var msg, user, _i, _len;
+        msg = "[[;white;black]Online now: ]";
+        for (_i = 0, _len = users.length; _i < _len; _i++) {
+          user = users[_i];
+          msg += '\n' + user;
+        }
+        msg += '\n    ' + "[[;gray;black]TIP: If you don't appear in this list, please refesh your window.]";
+        return req.io.emit('message', msg);
+      });
     });
     app.io.route('create', function(req) {
       var _base, _name;

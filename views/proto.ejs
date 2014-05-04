@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+<title>WinterMUTE - The Verse</title>
+
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="scripts/ejs.js"></script>
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
+
+</head>
+<body>
+
+<div id="tutorial1">
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="col-xs-12">
+
+<h1>TO DO</h1>
+
+<p>command: list me -> gives a list of everything you own (characters, zones, rooms, objects)</p>
+<p>command: look me -> shows a profile of some sort? </p>
+
+<h1>Welcome to WinterMUTE</h1>
+
+<h2>What is a MUTE?</h2>
+
+<p>MUTE stands for Multi-User Text Empire. It is a text-based sandbox game in which you type commands to create and role-play with characters, rooms, and objects. All the content is created by the users. You can build anything you like!</p>
+<p>If you've ever played a MUD, MUSH, MUCK, or MOO (etc.), this shouldn't seem too strange to you. Just type "help" into the interpreter to get a list of commands.</p>
+<p>If you haven't ever played a MU*, don't panic! You can use the Command Palette to the right of your screen. These buttons do exactly the same thing as typing in the commands yourself.</p>
+<p>Because this MUTE is delivered via the web browser, we can do lots of helpful things that old MU*s couldn't, such as using forms to create and edit complex things in the world. So be aware that when you type a command, you may get a pop-up form (like this one) instead of having to type everything into the interpreter piece-meal.</p>
+
+<h2>Getting Started</h2>
+
+<h3>Users and Characters</h3>
+
+<p>You are a <b>user</b> in the <b>verse</b>, which is everything and anything in WinterMUTE's database. You can have many <b>characters</b> to play, but you also have an <b>out-of-character (OOC) self</b> that is you, the architect of the verse. (In an MMORPG, characters would be called "toons," and your OOC persona would be like your global chat handle.)</p>
+<p>There are other users here, each with their own characters. Most importantly, there are users, called <b>wizards</b> who are in charge of making things run smoothly and helping other users. (In an MMORPG, wizards would be like game masters (GMs). There is also a "mud-mom," called <b>Lulu</b>, who wrote WinterMUTE and is in charge of keeping the server up and running.</p>
+
+<h3>Rooms, Zones, and Channels</h3>
+
+<p>The verse is made up of <b>rooms</b> which have descriptions and <b>exits</b>, but that's the only similarity. A room can be described as anything, from an outdoor park to a cupboard under the stairs to a space between dimensions. Each room belongs to one or more <b>zones</b>, which help to organize rooms into useful groups. For example, all the rooms that make up a house might comprise a house zone. Zones are primarily used to share information across all the rooms within it. In our example, you could shout in one room, and someone else in the house would hear you.</p>
+<p>This brings us to <b>channels</b>. A channel is a chat room that you automatically join depending on where you are in the world. Many zones have their own channels so users who are working on that zone can communicate privately. Elsewhere, a channel might be used like an intercom system or a telepathic linkup.</p>
+<p>The wizards have a channel to help coordinate their efforts, which anyone can post to but only they can see.</p>
+<p>Everyone is always joined to the OOC channel, and everything you post is broadcast under your OOC name to everyone on WinterMUTE.</p>
+
+<h3>Objects and Clothing</h3>
+
+<p>In addition to characters and rooms, you can also create <b>objects</b>. These can be anything from a pebble to furniture to multi-ton statuary to bionic implants. They can be kept in characters' <b>inventories</b>, placed in rooms, put in <b>container</b> objects, given to other characters, or stored in your OOC self's staging area.</p>
+<p>Some objects respond to <b>verbs</b>. For example, you may sit in a chair. Look at an object to get a list of the verbs it understands.</p>
+<p>Some objects can be worn by characters so that they show up in a character's description when looked at.</p>
+
+<h3>Getting Around</h3>
+<p>Every room can have at most six exits: <b>north</b>, <b>east</b>, <b>south</b>, <b>west</b>, <b>up</b>, and <b>down</b>. A description of a room's exits is displayed by typing <code>exits</code>. To use an exit, simply type the direction you'd like to go. You can also use the shorthand <b>n</b>, <b>e</b>, <b>s</b>, <b>w</b>, <b>i</b>, and <b>d</b>. The directional buttons in the Command Palette are also available.</p>
+<p>The command <code>recall</code> will return you from wherever you are in the world to the character staging area.</p>
+<p>Some areas are private and require a key to enter. You can request a key from the room's owner or a wizard.</p>
+
+<h3>Commands, Codes, and Keywords</h3>
+
+<p>WinterMUTE responds to your <b>commands</b>. Commands may be followed by <b>arguments</b> which tell the command how to behave.</p>
+
+<p>Every user and character has a unique <b>name</b>, and every room, zone, and object has a unique <b>code</b> that looks like a hexidecimal (web) color. These names and codes can be used as arguments so that the interpreter knows exactly which thing you mean.</p>
+
+<p>Objects also have <b>keywords</b> you can use as arguments so you don't have to memorize codes for interacting with things nearby.</p>
+
+<p>Please familiarize yourself with these basic commands:</p>
+
+<ul>
+  <li><b>status</b> - This gives your current status: which character is active, whether your are visible or not, and what room you're in.</li>
+  <li><b>look</b> - By itself, <code>look</code> will give you the description of the room you're in and a tableau of the characters in it with you. <code>look &lt;thing&gt;</code> will give you a description of the character or object you provide as an argument.</li>
+  <li><b>list</b> - Similar to <code>look</code>, list will itemize the characters and objects in a room and <code>list &lt;container&gt;</code> gives the objects in a container. <code>list &lt;name&gt;</code> gives the objects a character is wearing. Any object so listed will also provide its code.</li>
+  <li><b>inventory</b> or <b>inv</b> - Lists everything you are wearing and carrying.</li>
+  <li><b>ooc</b> - Posts everything that comes after the command to the out-of-character channel.</li>
+  <li><b>wiz</b> - Posts to the wizard channel. This is where you can ask for help. The server will tell you which wizards (if any) are online.</li>
+  <li><b>state</b> - This temporarily changes how you appear when the room you're in is looked at. It follows your normal description. For example, if Lulu's normal "look" value is "a lovely lady", and she types <code>state sitting at the bar</code>, when a user looks at the room, they will see <code>Lulu, a lovely lady, is here, sitting at the bar.</code>
+  <li><b>say</b> - Everything following this command is posted to the room you're in. For example, if Lulu types <code>say That's what she said!</code>, everyone in the room will see <code>Lulu says, "That's what she said!"</code>.</li>
+  <li><b>pose</b> - This is the basic role-playing mechanic, posted to the room you're in as an action. For example, if Lulu types <code>pose performs a little twirl.</code>, everyone in the room will see <code>Lulu performs a little twirl.</code></li>
+  <li><b>spoof</b> - This is like pose but the server omits your name. Use this very carefully and try to provide context so everyone knows who's acting. Bad example: <code>spoof You hear a loud noise!</code>Proper example: <code>spoof With a wink, Lulu performs a little twirl.</code></li>
+  <li><b>tell</b> - This sends a private message to another user. It takes two arguments: a user's OOC name or a character's name and the message. Tells that can't be delivered because a user is offline or a character is inactive will be delivered when they become online and active. Tells sent to an OOC name will be delivered immediately, regardelss of which character that user has active. Note that names with spaces in them must be enclosed in quotes: <code>tell "Miss Manners" Good day, madam!</code></li>
+  <li><b>reply</b> - The same as <code>tell</code>, but instead of supplying a user or character argument, the message is sent to the last person who sent you a tell.</li>
+</ul>
+<p>Similar to a terminal, pressing the up key in the interpreter will scroll through your command history in case you'd like to repeat a command.</p>
+
+<h3>Managing Characters</h3>
+
+<h4>Creating and Editing Characters</h4>
+
+<p>The first thing you did when you joined WinterMUTE was to create an out-of-character self. Creating other characters is just as easy with the command <code>create char</code>. These characters are bound to your account and you can have as many as you like.</p>
+
+<p>To edit any character you've created, use <code>edit char</code> or <code>edit char &lt;name&gt;</code>.</p>
+
+<h4>Switching Characters</h4>
+
+<p>When you have no character active, you are effectively out-of-character, acting as your architect self. To activate character, type <code>char &lt;name&gt;</code>. You can switch active characters at any time by using the same command. To "take off" a character, use <code>char self</code>.</p>
+
+<h4>Visibility and Invisibility</h4>
+
+<p>All characters can, unless a room or zone dictates otherwise, be either visible or invisible. The natural state of users is to be invisible architects of the world, while characters are naturally visible inhabitants of the world, although there are as many exceptions as one can imagine. You may "sense" invisible users and characters moving through the world.</p>
+
+<p>To become visible or invisible, simply use the commands <code>visible</code> or <code>vis</code> and <code>invisible</code> or <code>invis</code>. Anyone in the room with you will be alerted of this change.</p>
+
+<p>Please be careful not to confuse <code>invis</code> with <code>inv</code> (inventory).</p>
+
+<h4>Staging</h4>
+
+<p>Whenever you log in or recall, you will find yourself in the Staging Area. This is an out-of-character space in which you can change characters, create and edit things, wear objects, and manage other business without disturbing a scene. Please make all preparations, including deciding whether your are visible or not, before leaving the Staging Area.</p>
+
+<h3>Managing Objects</h3>
+
+<h4>Inventories</h4>
+
+<p>Each character, including your OOC self, has its own inventory, accessed by <code>inventory</code> or <code>inv</code>. Any character can access your OOC inventory with <code>inv self</code>, and your OOC self can access any of your character's inventories with <code>inv &lt;name&gt;</code>.</p>
+
+<h4>Verbs</h4>
+
+<p>All objects can be interacted with in some very basic ways:</p>
+<ul>
+  <li><b>look</b> - Gives a robust description of an object. Container objects can also be <code>list</code>ed to see what's inside.</li>
+  <li><b>take</b></li> - Picks up an object in the room or takes it out of a container in your inventory.
+  <li>put</li> - Places an object in the room or in a container.
+  <li>give</li> - Moves an item from your inventory to that of another character in the room.
+  <li><b>wear</b> and <b>unwear</b></li> - Any object with the wearable property can be worn by any character, including your OOC self. These items are shown when one looks at a character.
+</ul>
+<p>Some objects have been programmed to respond to other, special verbs. For example, some chairs may be sat on. To see the available verbs for any object, use <code>verbs &lt;object&gt;</code>.</p>
+
+<h2>Etiquette</h2>
+
+<h2>Creating</h2>
+
+<h3>Objects and Clothing</h3>
+<p>In addition to characters and rooms, you can also create <b>objects</b>. These can be anything from a pebble to furniture to multi-ton statuary to bionic implants. They can be kept in characters' <b>inventories</b>, placed in rooms, put in <b>container</b> objects, given to other characters, or stored in your OOC self's staging area.</p>
+<p>Some objects respond to <b>verbs</b>. For example, you may sit in a chair. Look at an object to get a list of the verbs it understands.</p>
+<p>Some objects can be worn by characters so that they show up in a character's description when looked at.</p>
+
+</body>
+</html>

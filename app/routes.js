@@ -16,6 +16,9 @@
     app.get('/tutorial', function(req, res) {
       return res.render('tutorial.ejs');
     });
+    app.get('/proto', function(req, res) {
+      return res.render('proto.ejs');
+    });
     app.get('/login', function(req, res) {
       return res.render('login.ejs', {
         message: req.flash('loginMessage')
