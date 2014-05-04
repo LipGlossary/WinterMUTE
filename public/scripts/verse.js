@@ -50,6 +50,9 @@
       },
       'pose': function(msg) {
         return socket.emit('pose', msg);
+      },
+      'spoof': function(msg) {
+        return socket.emit('spoof', msg);
       }
     };
     handler = function(command, term) {

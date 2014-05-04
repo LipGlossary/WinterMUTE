@@ -188,4 +188,8 @@
     return term.echo('[[;white;black]' + data.user + ' ' + data.message + ']');
   });
 
+  socket.on('spoof', function(data) {
+    return term.echo('[[;white;black]' + data.message + ']');
+  });
+
 }).call(this);

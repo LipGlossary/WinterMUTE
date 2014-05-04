@@ -546,7 +546,7 @@
         }
       });
     });
-    return app.io.route('pose', function(req) {
+    app.io.route('pose', function(req) {
       return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
         if (err != null) {
           return req.io.emit('error', err);
@@ -554,6 +554,20 @@
           return req.io.emit('message', "You are invisible.");
         } else {
           return app.io.broadcast('pose', {
+            user: user.chars[user.currentChar].name,
+            message: req.data
+          });
+        }
+      });
+    });
+    return app.io.route('spoof', function(req) {
+      return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
+        if (err != null) {
+          return req.io.emit('error', err);
+        } else if (user.visible === false) {
+          return req.io.emit('message', "You are invisible.");
+        } else {
+          return app.io.broadcast('spoof', {
             user: user.chars[user.currentChar].name,
             message: req.data
           });

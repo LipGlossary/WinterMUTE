@@ -141,3 +141,7 @@ socket.on 'say', (data) ->
 
 socket.on 'pose', (data) ->
   term.echo '[[;white;black]' + data.user + ' ' + data.message + ']'
+
+socket.on 'spoof', (data) ->
+  # add user data for wizards to see?
+  term.echo '[[;white;black]' + data.message + ']'
