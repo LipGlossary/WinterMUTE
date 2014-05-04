@@ -195,6 +195,42 @@ spoof                         Act anonymously in the room
       msg += '\n    ' + "[[;gray;black]TIP: If you don't appear in this list, please refesh your window.]"
       req.io.emit 'message', msg
 
+  app.io.route 'vis', (req) ->
+    User
+    .findById req.session.passport.user
+    .populate 'chars'
+    .exec (err, user) ->
+      if err? then req.io.emit 'error', err
+      else if user.visible is true
+        req.io.emit 'message', "You are already visible."
+      else
+        user.visible = true
+        user.save (err2, user2) ->
+          if err? then req.io.emit 'error', err2
+          else
+            req.io.emit 'update', user2
+            char = user2.chars[user2.currentChar]
+            req.io.emit 'message', "[[;white;black]You appear #{char.appear}.]"
+            req.io.broadcast 'message', "[[;white;black]#{char.name} appears #{char.appear}.]"
+
+  app.io.route 'invis', (req) ->
+    User
+    .findById req.session.passport.user
+    .populate 'chars'
+    .exec (err, user) ->
+      if err? then req.io.emit 'error', err
+      else if user.visible is false
+        req.io.emit 'message', "You are already invisible."
+      else
+        user.visible = false
+        user.save (err2, user2) ->
+          if err? then req.io.emit 'error', err2
+          else
+            req.io.emit 'update', user2
+            char = user2.chars[user2.currentChar]
+            req.io.emit 'message', "[[;white;black]You disappear #{char.appear}.]"
+            req.io.broadcast 'message', "[[;white;black]#{char.name} disappears #{char.appear}.]"
+
   app.io.route 'create', (req) ->
     unless commands['create'][req.data[0]]?(req)
       if not req.data[0]?

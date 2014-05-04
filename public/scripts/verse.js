@@ -19,11 +19,23 @@
       'who': function() {
         return socket.emit('who');
       },
-      'edit': function(args) {
-        return socket.emit('edit', args);
+      'vis': function() {
+        return socket.emit('vis');
+      },
+      'visible': function() {
+        return socket.emit('vis');
+      },
+      'invis': function() {
+        return socket.emit('invis');
+      },
+      'invisible': function() {
+        return socket.emit('invis');
       },
       'create': function(args) {
         return socket.emit('create', args);
+      },
+      'edit': function(args) {
+        return socket.emit('edit', args);
       }
     };
     channels = {

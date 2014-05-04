@@ -7,13 +7,17 @@ jQuery ($) ->
 # COMMAND HANLDER
 
   commands =
-    'help'    :        -> window.open('/tutorial')
-    'proto'   :        -> window.open('/proto')
-    'command' :        -> socket.emit 'command'
-    'status'  :        -> socket.emit 'status'
-    'who'     :        -> socket.emit 'who'
-    'edit'    : (args) -> socket.emit 'edit', args
-    'create'  : (args) -> socket.emit 'create', args
+    'help'      :        -> window.open('/tutorial')
+    'proto'     :        -> window.open('/proto')
+    'command'   :        -> socket.emit 'command'
+    'status'    :        -> socket.emit 'status'
+    'who'       :        -> socket.emit 'who'
+    'vis'       :        -> socket.emit 'vis'
+    'visible'   :        -> socket.emit 'vis'
+    'invis'     :        -> socket.emit 'invis'
+    'invisible' :        -> socket.emit 'invis'
+    'create'    : (args) -> socket.emit 'create', args
+    'edit'      : (args) -> socket.emit 'edit', args
 
   channels =
     'ooc' : (msg) -> socket.emit 'ooc', msg

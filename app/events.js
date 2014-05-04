@@ -223,6 +223,50 @@
         return req.io.emit('message', msg);
       });
     });
+    app.io.route('vis', function(req) {
+      return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
+        if (err != null) {
+          return req.io.emit('error', err);
+        } else if (user.visible === true) {
+          return req.io.emit('message', "You are already visible.");
+        } else {
+          user.visible = true;
+          return user.save(function(err2, user2) {
+            var char;
+            if (err != null) {
+              return req.io.emit('error', err2);
+            } else {
+              req.io.emit('update', user2);
+              char = user2.chars[user2.currentChar];
+              req.io.emit('message', "[[;white;black]You appear " + char.appear + ".]");
+              return req.io.broadcast('message', "[[;white;black]" + char.name + " appears " + char.appear + ".]");
+            }
+          });
+        }
+      });
+    });
+    app.io.route('invis', function(req) {
+      return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
+        if (err != null) {
+          return req.io.emit('error', err);
+        } else if (user.visible === false) {
+          return req.io.emit('message', "You are already invisible.");
+        } else {
+          user.visible = false;
+          return user.save(function(err2, user2) {
+            var char;
+            if (err != null) {
+              return req.io.emit('error', err2);
+            } else {
+              req.io.emit('update', user2);
+              char = user2.chars[user2.currentChar];
+              req.io.emit('message', "[[;white;black]You disappear " + char.appear + ".]");
+              return req.io.broadcast('message', "[[;white;black]" + char.name + " disappears " + char.appear + ".]");
+            }
+          });
+        }
+      });
+    });
     app.io.route('create', function(req) {
       var _base, _name;
       if (!(typeof (_base = commands['create'])[_name = req.data[0]] === "function" ? _base[_name](req) : void 0)) {
