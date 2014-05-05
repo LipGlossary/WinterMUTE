@@ -16,6 +16,7 @@ jQuery ($) ->
     'visible'   :        -> socket.emit 'vis'
     'invis'     :        -> socket.emit 'invis'
     'invisible' :        -> socket.emit 'invis'
+    'look'      : (args) -> socket.emit 'look', args
     'char'      : (args) -> socket.emit 'char', args
     'create'    : (args) -> socket.emit 'create', args
     'edit'      : (args) -> socket.emit 'edit', args

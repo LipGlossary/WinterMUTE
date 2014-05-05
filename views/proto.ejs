@@ -12,9 +12,13 @@
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
 
 <style>
+body { 
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 .strike {
   text-decoration: line-through;
-  color: gray;
+  color: lightgray;
 }
 </style>
 
@@ -26,7 +30,7 @@
     <div class="row-fluid">
       <div class="col-xs-12">
 
-<h3>Struck items are not yet implemented</h3>
+<div class="alert alert-danger"><p>Struck items are not yet implemented</p></div>
 
 <h1>Welcome to WinterMUTE</h1>
 
@@ -74,7 +78,7 @@
 
 <ul>
   <li><b>status</b> - This gives your current status: which character is active, whether your are visible or not, and what room you're in.</li>
-  <li class="strike"><b>look</b> - By itself, <code>look</code> will give you the description of the room you're in and a tableau of the characters in it with you. <code>look &lt;thing&gt;</code> will give you a description of the character or object you provide as an argument.</li>
+  <li><b>look</b> - By itself, <code>look</code> will give you the description of the room you're in and a tableau of the characters in it with you. <code>look &lt;thing&gt;</code> will give you a description of the character <span class="strike">or object</span> you provide as an argument.</li>
   <li class="strike"><b>list</b> - Similar to <code>look</code>, list will itemize the characters and objects in a room and <code>list &lt;container&gt;</code> gives the objects in a container. <code>list &lt;name&gt;</code> gives the objects a character is wearing. Any object so listed will also provide its code.</li>
   <li class="strike"><b>inventory</b> or <b>inv</b> - Lists everything you are wearing and carrying.</li>
   <li><b>ooc</b> - Posts everything that comes after the command to the out-of-character channel.</li>
@@ -98,7 +102,7 @@
 
 <h4>Switching Characters</h4>
 
-<p>When you have no character active, you are effectively out-of-character, acting as your architect self. To activate character, type <code>char &lt;number&gt;</code> where &lt;number&gt; is the order of your characters listed in the info panel on the right of your screen. If you're unsure of the number, just use <code>char</code> and the interpreter will prompt you with a list. You can switch active characters at any time by using the same command. To "take off" a character, use <code>char self</code>.</p>
+<p>When you have no character active, you are effectively out-of-character, acting as your architect self. To activate character, type <code>char &lt;number&gt;</code> where &lt;number&gt; is the order of your characters listed in the info panel on the right of your screen. If you're unsure of the number, just use <code>char</code> and the interpreter will prompt you with a list. You can switch active characters at any time by using the same command. To "take off" a character, use <code class="strike">char self</code> <code>char 0</code>.</p>
 
 <h4>Visibility and Invisibility</h4>
 
@@ -139,8 +143,12 @@
 <p class="strike">Some objects respond to <b>verbs</b>. For example, you may sit in a chair. Look at an object to get a list of the verbs it understands.</p>
 <p class="strike">Some objects can be worn by characters so that they show up in a character's description when looked at.</p>
 
-<h2>Important Prototype Stuff</h2>
-<p>If it hasn't been apparent, movement between rooms is not yet implemented. Actually, rooms themselves haven't been fully implemented. Because it would be really dull otherwise, I have hard-coded a single room to play in for prototyping purposes. You'll just have to deal with it.</p>
+<br />
+
+<div class="alert alert-info">
+  <h2>Important Prototype Stuff</h2>
+  <p>If it hasn't been apparent, movement between rooms is not yet implemented. Actually, rooms themselves haven't been fully implemented. Because it would be really dull otherwise, I have hard-coded a single room to play in for prototyping purposes. You'll just have to deal with it.</p>
+</div>
 
 </body>
 </html>
