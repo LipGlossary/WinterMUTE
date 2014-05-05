@@ -1,16 +1,39 @@
 {
-  "name": "node-authentication",
+  "name": "WinterMUTE",
+  "version": "0.0.0",
+  "description": "A multi-user text empire built with Node.",
   "main": "server.js",
-  "dependencies" : {
-    "express.io" : "~1.1.13",
-    "ejs" : "~0.8.5",
-    "mongoose" : "~3.8.1",
-    "passport" : "~0.1.17",
-    "passport-local" : "~0.1.6",
-    "connect-flash" : "~0.1.1",
-    "bcrypt-nodejs" : "latest"
+  "dependencies": {
+    "bcrypt-nodejs": "~0.0.3",
+    "connect-flash": "~0.1.1",
+    "ejs": "~0.8.8",
+    "express.io": "~1.1.13",
+    "passport": "~0.1.18",
+    "passport-local": "~0.1.6",
+    "mongoose": "~3.8.8"
   },
-  "devDependencies" : {
-    "coffee-script" : "~1.7.1"
-  }
+  "devDependencies": {
+    "coffee-script": "~1.7.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LipGlossary/WinterMUTE.git"
+  },
+  "keywords": [
+    "mud",
+    "mush",
+    "muck",
+    "moo",
+    "node"
+  ],
+  "author": "Annalise \"Lulu\" Haynes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LipGlossary/WinterMUTE/issues"
+  },
+  "homepage": "https://github.com/LipGlossary/WinterMUTE"
 }
