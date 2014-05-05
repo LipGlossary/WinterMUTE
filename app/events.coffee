@@ -250,8 +250,7 @@ spoof                         Act anonymously in the room
           message : "Which character would you like to activate? (enter the number)\n" + list
           command : 'char'
           args : req.data
-      else if req.data[0] == 'self'
-        req.data[0] = 0
+      #else if req.data[0] is 'self' then req.data[0] = 0
       else unless user.chars[req.data[0]]?
         req.io.emit 'message', "Character #{req.data[0]} does not exist."
         req.io.emit 'message', "[[;gray;black]    TIP: Use the character's number. Type \"char\" to get a list."
@@ -277,6 +276,51 @@ spoof                         Act anonymously in the room
             if user.currentChar is 0
               req.io.emit 'message', "You are now out of character."
             else req.io.emit 'message', "You activated character #{user2.chars[user2.currentChar].name}."
+
+  app.io.route 'look', (req) ->
+    User
+    .findById req.session.passport.user
+    .exec (err, user) ->
+      if err? then req.io.emit 'error', err
+      else unless req.data[0]?
+        Room
+        .findOne code : '000001'
+        .exec (err2, room) ->
+          if err2? then req.io.emit 'error', err2
+          else
+            msg = '\n[[b;lime;black]' + room.name + ']\n\n[[;white;black]' + room.look + ']\n'
+            User
+            .find()
+            .where '_id'
+            .in clients
+            .populate 'chars'
+            .exec (err3, users) ->
+              if err3? then req.io.emit 'error', err3
+              else
+                for u in users when u.chars[0]? and u.visible is true
+                  c = u.chars[u.currentChar]
+                  msg += '\n    [[;darkorchid;black]' + c.name + ', ' + c.list + ', is here.]'
+                req.io.emit 'message', msg
+      else
+        Char
+        .findOne name : req.data[0]
+        .populate 'owner'
+        .exec (err4, char) ->
+          if err4? then req.io.emit 'error', err4
+          else unless char?
+            req.io.emit 'message', "There is no such person."
+          else unless char.owner._id.toString() in clients
+            req.io.emit 'message', "#{char.name} is nowhere to be seen."
+          else if char.owner.visible is false
+            req.io.emit 'message', "#{char.name} is nowhere to be seen."
+          else char.owner.populate 'chars', (err5, owner) ->
+            if err5? then req.io.emit 'error', err5
+            else if owner.chars[owner.currentChar].name isnt char.name
+              req.io.emit 'message', "#{char.name} is nowhere to be seen."
+            else 
+              msg = '[[b;white;black]' + char.name + ']\n'
+              msg += '[[;white;black]' + char.look + ']'
+              req.io.emit 'message', msg
 
   app.io.route 'create', (req) ->
     unless commands['create'][req.data[0]]?(req)

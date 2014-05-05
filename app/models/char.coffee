@@ -3,7 +3,7 @@ mongoose = require 'mongoose'
 Char = mongoose.Schema
   owner:
     type: mongoose.Schema.Types.ObjectId
-    ref: 'Char'
+    ref: 'User'
     required: true
   name:
   	type: String
