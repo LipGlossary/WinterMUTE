@@ -123,7 +123,7 @@ edit                          Edit anything
 
   app.io.route 'create', (req) ->
     unless commands['create'][req.data[0]]?(req)
-      if not req.data[0]?
+      unless req.data[0]?
         req.io.emit 'prompt',
         message : "What would you like to create?\n    char    room    object    zone"
         command : 'create'
@@ -132,7 +132,7 @@ edit                          Edit anything
 
   app.io.route 'edit', (req) ->
     unless commands['edit'][req.data[0]]?(req)
-      if req.data[0]?
+      unless req.data[0]?
         req.io.emit 'prompt',
           message : 'What would you like to edit?\n    self    char    room    object'
           command : 'edit'

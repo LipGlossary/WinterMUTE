@@ -163,7 +163,7 @@
     app.io.route('edit', function(req) {
       var _base, _name;
       if (!(typeof (_base = commands['edit'])[_name = req.data[0]] === "function" ? _base[_name](req) : void 0)) {
-        if (req.data[0] != null) {
+        if (req.data[0] == null) {
           return req.io.emit('prompt', {
             message: 'What would you like to edit?\n    self    char    room    object',
             command: 'edit',
