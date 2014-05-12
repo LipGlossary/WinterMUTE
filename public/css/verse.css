@@ -23,7 +23,8 @@ div#palette {
 	height: 100%;
 }
 
-div#info {
+div#info,
+div#who {
 	padding: 10px;
 	background-color: #f0eff5;
 	border: 1px solid #bbb6ca;

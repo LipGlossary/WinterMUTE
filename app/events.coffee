@@ -6,6 +6,65 @@ Room = require '../app/models/room'
 
 module.exports = (app) ->
 
+  clients = []
+
+  getClients = (done) ->
+    User
+    .find()
+    .where '_id'
+    .in clients
+    .populate 'chars'
+    .exec (err, users) ->
+      if err? then done err, null
+      else
+        list = []
+        list.push(login.chars[0].name) for login in users when login.chars[0]?
+        done null, list
+
+  app.io.route 'ready', (req) ->
+    User
+    .findById req.session.passport.user
+    .populate 'chars'
+    .exec (err, user) ->
+      clients.push user._id
+      req.socket.set 'user', user, ->
+        unless user.chars[0]? then req.io.emit 'tutorial'
+        else
+          req.io.emit 'update', user
+          getClients (err, list) ->
+            if err? then req.io.emit 'error', err
+            else app.io.broadcast 'who', list
+
+  app.io.route 'disconnect', (req) ->
+    req.socket.get 'user', (err, user) ->
+      if err? then req.io.emit 'error', err
+      else
+        clients = clients.filter (elem) -> elem isnt user._id # watch for strings
+        getClients (err, list) ->
+          if err? then req.io.emit 'error', err
+          else app.io.broadcast 'who', list
+
+  app.io.route 'reconnect', (req) ->
+    req.socket.get 'user', (err, user) ->
+      if err? then req.io.emit 'error', err
+      else if user
+        clients.push user._id
+        getClients (err2, list) ->
+          if err2? then req.io.emit 'error', err2
+          else app.io.broadcast 'who', list
+      else unless req.session.passport?
+        req.io.emit 'redirect', '/login'
+      else
+        User
+        .findById req.session.passport.user
+        .exec (err2, user2) ->
+          if err2? then req.io.emit 'error', err
+          else
+            clients.push user2._id
+            getClients (err3, list) ->
+              if err3? then req.io.emit 'error', err3
+              else app.io.broadcast 'who', list
+
   generateCode = (done) ->
     code = ('000000' + ( Math.random() * 0xFFFFFF << 0 ).toString( 16 )).slice( -6 )
     Zone
@@ -90,15 +149,6 @@ module.exports = (app) ->
               req.session.editId = zone._id
               console.log zone
               req.io.emit 'edit-zone', zone
-
-  app.io.route 'ready', (req) ->
-    User
-    .findById req.session.passport.user
-    .populate 'chars'
-    .exec (err, user) ->
-      if not user.chars[0]?
-        req.io.emit 'tutorial'
-      else req.io.emit 'update', user
 
   app.io.route 'command', (req) ->
     req.io.emit 'message', '''

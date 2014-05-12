@@ -13,7 +13,95 @@
   Room = require('../app/models/room');
 
   module.exports = function(app) {
-    var commands, createChar, createZone, generateCode, validateChar;
+    var clients, commands, createChar, createZone, generateCode, getClients, validateChar;
+    clients = [];
+    getClients = function(done) {
+      return User.find().where('_id')["in"](clients).populate('chars').exec(function(err, users) {
+        var list, login, _i, _len;
+        if (err != null) {
+          return done(err, null);
+        } else {
+          list = [];
+          for (_i = 0, _len = users.length; _i < _len; _i++) {
+            login = users[_i];
+            if (login.chars[0] != null) {
+              list.push(login.chars[0].name);
+            }
+          }
+          return done(null, list);
+        }
+      });
+    };
+    app.io.route('ready', function(req) {
+      return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
+        clients.push(user._id);
+        return req.socket.set('user', user, function() {
+          if (user.chars[0] == null) {
+            return req.io.emit('tutorial');
+          } else {
+            req.io.emit('update', user);
+            return getClients(function(err, list) {
+              if (err != null) {
+                return req.io.emit('error', err);
+              } else {
+                return app.io.broadcast('who', list);
+              }
+            });
+          }
+        });
+      });
+    });
+    app.io.route('disconnect', function(req) {
+      return req.socket.get('user', function(err, user) {
+        if (err != null) {
+          return req.io.emit('error', err);
+        } else {
+          clients = clients.filter(function(elem) {
+            return elem !== user._id;
+          });
+          return getClients(function(err, list) {
+            if (err != null) {
+              return req.io.emit('error', err);
+            } else {
+              return app.io.broadcast('who', list);
+            }
+          });
+        }
+      });
+    });
+    app.io.route('reconnect', function(req) {
+      return req.socket.get('user', function(err, user) {
+        if (err != null) {
+          return req.io.emit('error', err);
+        } else if (user) {
+          clients.push(user._id);
+          return getClients(function(err2, list) {
+            if (err2 != null) {
+              return req.io.emit('error', err2);
+            } else {
+              return app.io.broadcast('who', list);
+            }
+          });
+        } else if (req.session.passport == null) {
+          return req.io.emit('redirect', '/login');
+        } else {
+          return User.findById(req.session.passport.user).exec(function(err2, user2) {
+            if (err2 != null) {
+              return req.io.emit('error', err);
+            } else {
+              clients.push(user2._id);
+              return getClients(function(err3, list) {
+                if (err3 != null) {
+                  return req.io.emit('error', err3);
+                } else {
+                  return app.io.broadcast('who', list);
+                }
+              });
+            }
+          });
+        }
+      });
+    });
     generateCode = function(done) {
       var code;
       code = ('000000' + (Math.random() * 0xFFFFFF << 0).toString(16)).slice(-6);
@@ -134,15 +222,6 @@
         }
       }
     };
-    app.io.route('ready', function(req) {
-      return User.findById(req.session.passport.user).populate('chars').exec(function(err, user) {
-        if (user.chars[0] == null) {
-          return req.io.emit('tutorial');
-        } else {
-          return req.io.emit('update', user);
-        }
-      });
-    });
     app.io.route('command', function(req) {
       return req.io.emit('message', '\n[[;white;black]COMMAND     ARGUMENTS         DESCRIPTION]\n\ncommands                      List of commands\nhelp                          Launch tutorial page\n\ncreate                        Create anything\n            char              Create a new character\n            room              Create a new room\n            object            Create a new object\n\nedit                          Edit anything\n            self              Edit your out-of-character self\n            char              Edit a characters\n            char, <name>      Edit the character <name>\n            room              Edit a room\n');
     });

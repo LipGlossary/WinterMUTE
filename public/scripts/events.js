@@ -34,14 +34,28 @@
     return console.log('reconnect_failed');
   });
 
-  socket.on('error', function() {
-    return console.log('error');
+  socket.on('error', function(data) {
+    return console.log('ERROR: ' + data);
   });
 
   socket.emit('ready');
 
+  socket.on('reconnect', function() {
+    return socket.emit('reconnect');
+  });
+
+  socket.on('redirect', function(data) {
+    return location.href = data;
+  });
+
+  socket.on('tutorial', function() {
+    term.pause();
+    return $('#tutorial').show();
+  });
+
   socket.on('update', function(user) {
     var char, index, _i, _len, _ref;
+    $.user = user;
     $('#info').empty();
     $('#info').append('<p>Hello, </p>');
     if (user.currentChar === 0) {
@@ -64,16 +78,23 @@
       }
     }
     if (user.visible) {
-      $('#info').append('<p>You are currently visible.</p>');
+      $('#info').append('<p>You are <b>visible</b>.</p>');
     } else {
-      $('#info').append('<p>You are currently invisible.</p>');
+      $('#info').append('<p>You are <b>invisible</b>.</p>');
     }
     return $('#info').append('<a href="/logout">logout</a>');
   });
 
-  socket.on('tutorial', function() {
-    term.pause();
-    return $('#tutorial').show();
+  socket.on('who', function(users) {
+    var user, _i, _len, _results;
+    $('#who').empty();
+    $('#who').append('<p>Online now:</p><ul></ul>');
+    _results = [];
+    for (_i = 0, _len = users.length; _i < _len; _i++) {
+      user = users[_i];
+      _results.push($('#who ul').append('<li>' + user + '</li>'));
+    }
+    return _results;
   });
 
   socket.on('message', function(message) {
