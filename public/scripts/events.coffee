@@ -33,12 +33,21 @@ socket.on 'reconnect_failed', ->
 
 
 
-socket.on 'error', ->
-  console.log 'error'
+socket.on 'error', (data) -> console.log 'ERROR: ' + data
 
 socket.emit 'ready'
 
+socket.on 'reconnect', -> socket.emit 'reconnect'
+
+socket.on 'redirect', (data) ->
+  location.href = data
+
+socket.on 'tutorial', ->
+  term.pause()
+  $('#tutorial').show()
+
 socket.on 'update', (user) ->
+  $.user = user
   $('#info').empty()
   $('#info').append '<p>Hello, </p>'
   if user.currentChar == 0
@@ -51,14 +60,15 @@ socket.on 'update', (user) ->
         $('#info ul').append '<li><b>' + char.name + '</b></li>'
       else $('#info ul').append '<li>' + char.name + '</li>'
   if user.visible
-    $('#info').append '<p>You are currently visible.</p>'
-  else $('#info').append '<p>You are currently invisible.</p>'
+    $('#info').append '<p>You are <b>visible</b>.</p>'
+  else $('#info').append '<p>You are <b>invisible</b>.</p>'
   $('#info').append '<a href="/logout">logout</a>'
 
-
-socket.on 'tutorial', ->
-  term.pause()
-  $('#tutorial').show()
+socket.on 'who', (users) ->
+  $('#who').empty()
+  $('#who').append '<p>Online now:</p><ul></ul>'
+  for user in users
+    $('#who ul').append '<li>' + user + '</li>'
 
 socket.on 'message', (message) ->
   term.echo message
