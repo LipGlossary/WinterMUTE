@@ -1,16 +1,17 @@
 {
   "name": "node-authentication",
   "main": "server.js",
-  "dependencies" : {
-    "express.io" : "~1.1.13",
-    "ejs" : "~0.8.5",
-    "mongoose" : "~3.8.1",
-    "passport" : "~0.1.17",
-    "passport-local" : "~0.1.6",
-    "connect-flash" : "~0.1.1",
-    "bcrypt-nodejs" : "latest"
+  "dependencies": {
+    "express.io": "~1.1.13",
+    "ejs": "~0.8.5",
+    "mongoose": "~3.8.1",
+    "passport": "~0.1.17",
+    "passport-local": "~0.1.6",
+    "connect-flash": "~0.1.1",
+    "bcrypt-nodejs": "latest",
+    "connect-mongo": "~0.4.1"
   },
-  "devDependencies" : {
-    "coffee-script" : "~1.7.1"
+  "devDependencies": {
+    "coffee-script": "~1.7.1"
   }
 }
