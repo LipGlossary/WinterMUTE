@@ -9,7 +9,8 @@
     "passport-local": "~0.1.6",
     "connect-flash": "~0.1.1",
     "bcrypt-nodejs": "latest",
-    "connect-mongo": "~0.4.1"
+    "connect-mongo": "~0.4.1",
+    "angular": "~1.2.16"
   },
   "devDependencies": {
     "coffee-script": "~1.7.1"
