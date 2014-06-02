@@ -35,7 +35,13 @@
   });
 
   socket.on('error', function(data) {
-    return console.log('ERROR: ' + data);
+    var key, msg, value;
+    msg = "[[;red;black]ERROR: ";
+    for (key in data) {
+      value = data[key];
+      msg += key + ' : ' + value + '\n';
+    }
+    return term.echo(msg + ']');
   });
 
   socket.emit('ready');
@@ -54,35 +60,7 @@
   });
 
   socket.on('update', function(user) {
-    var char, index, _i, _len, _ref;
-    $.user = user;
-    $('#info').empty();
-    $('#info').append('<p>Hello, </p>');
-    if (user.currentChar === 0) {
-      $('#info p').append('<b>' + user.chars[0].name + '</b>.');
-    } else {
-      $('#info p').append(user.chars[0].name + '.');
-    }
-    if (user.chars.length > 1) {
-      $('#info').append('<p>Characters:</p>', '<ul></ul>');
-      _ref = user.chars;
-      for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
-        char = _ref[index];
-        if (index !== 0) {
-          if (index === user.currentChar) {
-            $('#info ul').append('<li><b>' + char.name + '</b></li>');
-          } else {
-            $('#info ul').append('<li>' + char.name + '</li>');
-          }
-        }
-      }
-    }
-    if (user.visible) {
-      $('#info').append('<p>You are <b>visible</b>.</p>');
-    } else {
-      $('#info').append('<p>You are <b>invisible</b>.</p>');
-    }
-    return $('#info').append('<a href="/logout">logout</a>');
+    return $.user = user;
   });
 
   socket.on('who', function(users) {

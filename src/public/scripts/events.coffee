@@ -33,7 +33,11 @@ socket.on 'reconnect_failed', ->
 
 
 
-socket.on 'error', (data) -> console.log 'ERROR: ' + data
+socket.on 'error', (data) ->
+  msg = "[[;red;black]ERROR: "
+  for key, value of data
+    msg += key + ' : ' + value + '\n'
+  term.echo msg + ']'
 
 socket.emit 'ready'
 
@@ -48,21 +52,6 @@ socket.on 'tutorial', ->
 
 socket.on 'update', (user) ->
   $.user = user
-  $('#info').empty()
-  $('#info').append '<p>Hello, </p>'
-  if user.currentChar == 0
-    $('#info p').append '<b>' + user.chars[0].name + '</b>.'
-  else $('#info p').append user.chars[0].name + '.'
-  if user.chars.length > 1
-    $('#info').append '<p>Characters:</p>', '<ul></ul>'
-    for char, index in user.chars when index isnt 0
-      if index == user.currentChar
-        $('#info ul').append '<li><b>' + char.name + '</b></li>'
-      else $('#info ul').append '<li>' + char.name + '</li>'
-  if user.visible
-    $('#info').append '<p>You are <b>visible</b>.</p>'
-  else $('#info').append '<p>You are <b>invisible</b>.</p>'
-  $('#info').append '<a href="/logout">logout</a>'
 
 socket.on 'who', (users) ->
   $('#who').empty()
