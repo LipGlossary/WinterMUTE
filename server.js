@@ -27,6 +27,7 @@
     app.use(express.cookieParser());
     app.use(express.bodyParser());
     app.use(express["static"](__dirname + '/public'));
+    app.use('/lib', express["static"](__dirname + '/bower_components'));
     app.set('view engine', 'ejs');
     app.use(express.session({
       store: new MongoStore({
