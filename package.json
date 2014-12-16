@@ -6,7 +6,7 @@
   "homepage": "https://github.com/LipGlossary/WinterMUTE",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/.bin/coffee app.coffee"
+    "start": "node_modules/.bin/nodemon start.js"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,8 @@
     "express.io": "~1.1.13",
     "mongoose": "~3.8.8",
     "passport": "~0.1.18",
-    "passport-local": "~0.1.6"
+    "passport-local": "~0.1.6",
+    "run-command": "^0.2.3"
   },
   "devDependencies": {
     "coffee-script": "~1.7.1",
