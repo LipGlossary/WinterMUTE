@@ -1,7 +1,7 @@
-User = require '../app/models/user'
-Char = require '../app/models/char'
-Zone = require '../app/models/zone'
-Room = require '../app/models/room'
+User = require './models/user'
+Char = require './models/char'
+Zone = require './models/zone'
+Room = require './models/room'
 
 module.exports = ->
 
@@ -11,7 +11,7 @@ module.exports = ->
     .exec (err, user1) ->
       if err? then done err, null
       else if user1? then done null, user1
-      else 
+      else
         user = new User
         user.email       = 'admin'
         user.password    = user.generateHash 'buy me a pretty horse'

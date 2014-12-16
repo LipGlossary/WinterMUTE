@@ -1,7 +1,7 @@
 module.exports = (app, passport) ->
 
   # normal routes ===============================================================
-  
+
   # show the home page (will also have our login links)
   app.get '/', (req, res) -> res.render 'index.ejs'
 

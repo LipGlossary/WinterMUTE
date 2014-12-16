@@ -1,8 +1,8 @@
 mongoose = require 'mongoose'
-User = require '../app/models/user'
-Char = require '../app/models/char'
-Zone = require '../app/models/zone'
-Room = require '../app/models/room'
+User = require './models/user'
+Char = require './models/char'
+Zone = require './models/zone'
+Room = require './models/room'
 
 module.exports = (app) ->
 
@@ -23,7 +23,7 @@ module.exports = (app) ->
       'room'   : (req) -> req.io.emit 'message', "I'm sorry, I cannot create rooms at this time."
       'object' : (req) -> req.io.emit 'message', "I'm sorry, I cannot creat objects at this time."
       'zone'   : (req) -> req.io.emit 'create-zone'
-    
+
     'edit' :
 
       'self' : (req) ->
@@ -70,7 +70,7 @@ module.exports = (app) ->
               req.io.emit 'edit-char', char
 
       'room' : (req) -> req.io.emit 'message', "Sorry, I can't edit rooms at this time."
-      
+
       'object' : (req) -> req.io.emit 'message', "Sorry, I can't edit objects at this time."
 
       'zone' : (req) ->
@@ -121,7 +121,7 @@ module.exports = (app) ->
         getClients (err, clients) ->
           if err? then req.io.emit 'error', err
           else app.io.broadcast 'who', clients
-  
+
   app.io.route 'disconnect', (req) ->
     clients.splice(clients.indexOf(req.session.passport?.user), 1);
     getClients (err, clients) ->
@@ -317,7 +317,7 @@ spoof                         Act anonymously in the room
             if err5? then req.io.emit 'error', err5
             else if owner.chars[owner.currentChar].name isnt char.name
               req.io.emit 'message', "#{char.name} is nowhere to be seen."
-            else 
+            else
               msg = '[[b;white;black]' + char.name + ']\n'
               msg += '[[;white;black]' + char.look + ']'
               req.io.emit 'message', msg

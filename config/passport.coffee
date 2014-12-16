@@ -2,7 +2,7 @@
 LocalStrategy = require('passport-local').Strategy
 
 # load up the user model
-User = require '../app/models/user'
+User = require '../lib/models/user'
 
 module.exports = (passport) ->
 

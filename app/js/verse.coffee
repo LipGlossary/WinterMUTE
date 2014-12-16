@@ -72,13 +72,13 @@ Version control is currently OFF. Edits cannot be undone.]
 # ENVIRONMENT ==================================================================
 
   # COMMAND PALETTE
-  $.getScript './scripts/palette.js'
+  $.getScript './js/palette.js'
 
   # EVENTS
-  $.getScript './scripts/events.js'
+  $.getScript './js/events.js'
 
   # FORMS
-  $.getScript './scripts/forms.js'
+  $.getScript './js/forms.js'
 
 # MISCELLANEOUS ================================================================
   $('#console').css "height": $('body').height() + "px"
